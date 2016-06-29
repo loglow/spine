@@ -97,6 +97,16 @@ def relpath_path(filepath, rootpath):
         return normalized
 
 
+def walker(fn):
+
+    def wrapped(self, *args, **kwargs):
+        for check_dir in os.walk(self.root):
+            if all(folder not in check_dir[0] for folder in self.ignores):
+                for filename in check_dir[2]:
+                    fn(self, os.path.join(check_dir[0],filename))
+    return wrapped
+
+
 class ProjectTree():
     """ Smart subversion wrapper with knowledge of project depedencies """
 
@@ -157,15 +167,6 @@ class ProjectCrawler():
     def self._abspath(path):
         return abspath_path(path, self.root)
 
-    def _walker(self, fn):
-
-        def wrapped():
-            for check_dir in os.walk(self.root):
-                if all(folder not in check_dir[0] for folder in self.ignores):
-                    for filename in check_dir[2]:
-                        fn(self, os.path.join(check_dir[0],filename))
-        return wrapped
-
     def get_blendfile_dependencies(self, blend_file):
         normalized = self._abs_path(blend_file)
         if is_blendfile(normalized):
@@ -182,6 +183,6 @@ class ProjectCrawler():
                         'path':self._relpath(dependency),
                         'filetype':get_file_type(dependency)})
 
-    @self._walker
+    @walker
     def get_all_blend_dependencies(self, blend_file):
         self.get_blendfile_dependencies(blend_file)
