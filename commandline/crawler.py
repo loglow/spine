@@ -16,53 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-"""
-Subversion Partial Inter-Dependency Ranger
-Spider does the following:
-  Perform a sparse directory-only checkout from project svn
-  Provide an api for extracting a specific file via update
-  Use of dependencies (cached?) to extract a thing
-"""
 
-"""
-checkout only the top level folder of a project, includes:
-library.json , some kind of dependency tree
-to check out a file
-
-some ideas:
-- initial 'smarts' are in data and on client side
-- each project needs a unique project ID
-- automatic dependency crawlers, potentially using bpy, gimp api, others
-- manual dependency addition
-- external project ID based recognition for future cross project dependencies
-- untracked 'generated' folder management with own method of retreiving caches  (if available) or regenerating based on recepies (if available)
-- metadata for generated files, problem with reproducability
-
-start with:
-- enhance library.json by nesting asset data one deeper, allowing extra data
-- implement crawler api + blend based crawler
-- ignore generated issue
-- ignore cross project deps but:
-- create project ID
-
-reference desk enhancements
-- update reference desk to be smarter with data types *
-- generic posthooks *
-- image previews *
-- compatibility with library.json changes
-- project browser and:
-- commit capability
-- update capability
-
-initial commit issues:
-- single file based commit (easy from blender)
-- easy show uncommited files
-
-* these options unrelelated to spider
-
-"""
-
-import pysvn
 import os
 import bpy
 import json
@@ -110,46 +64,6 @@ def walker(fn):
     return wrapped
 
 
-class ProjectTree():
-    """ Smart subversion wrapper with knowledge of project depedencies """
-
-    def __init__(self, path, url=None, user=None, password=None):
-        def get_login():
-            pass
-        self.client = pysvn.Client()
-        self.root = os.path.normpath(path)
-        if not os.path.exists(self.root):
-            self._checkout_empty_project()
-        self.url = self._get_url(url)
-        self.user = user
-        self.password = password
-
-    def _get_url(self, url):
-        if not url:
-            return self.client.info(self.root).url
-        return url
-
-    def _checkout_empty_project(self):
-        self.client.checkout(self.url, self.path, recurse=False)
-
-    def _update_path(self, path):
-        full_path = self._abs_path(self._rel_path(path))
-        self.client.update(
-            full_path,
-            depth=pysvn.depth.empty,
-            make_parents=True)                
-
-    def _rel_path(self, path):
-        norm = os.path.normpath(path) 
-        if norm.startswith(self.root):
-            return os.path.relpath(norm, self.root)
-        else:
-            return norm
-
-    def _abs_path(self, path):
-        return os.path.abspath(os.path.join(self.root, os.path.norm(path))) 
-
-
 class ProjectCrawler():
     """ Crawl Over Entire Project Generating Dependency Graph """
 
@@ -157,18 +71,33 @@ class ProjectCrawler():
         self.root = os.path.normpath(path)
         self.depedencies_file = os.path.join(self.root, DEPENDS_FILE)
         self.config_file = os.path.join(self.root, CONFIG_FILE)
-        if not any(os.path.exists(fn) in (
-                self.dependencies_file, self.config_file)):
-            raise IOError('Not a Project Folder')
-        self.data = json.loads(open(self.depedencies_file).read())
-        self.config = json.loads(open(self.config_file).read())
-        self.ignores = STANDARD_FOLDER_IGNORES + self.config.ignore_folders
+        try:
+            self.data = json.loads(open(self.depedencies_file).read())
+        except:  # File doesn't exist use correct error
+            self._empty_data()
+        try:
+            self.config = json.loads(open(self.config_file).read())
+        except:  # File doesn't exist use correct error
+            self._default_configs()
+        self.ignores = STANDARD_FOLDER_IGNORES + self.config['ignore_folders']
 
-    def self._relpath(path):
+    def _default_configs(self):
+        self.config = {'ignore_folders': []}
+        json.
+
+    def _empty_data(self):
+        pass
+
+    def _relpath(self, path):
         return relpath_path(path, self.root)
 
-    def self._abspath(path):
+    def _abspath(self, path):
         return abspath_path(path, self.root)
+
+    def _add_deps(self, main, dependencies):
+        node = {'path': main}
+        for dependency in dependencies:
+            self.network.add_edge(node, {'path': dependency})
 
     def get_blendfile_dependencies(self, blend_file):
         normalized = self._abs_path(blend_file)
@@ -185,6 +114,12 @@ class ProjectCrawler():
                     {
                         'path':self._relpath(dependency),
                         'filetype':get_file_type(dependency)})
+
+    def check_file_dependencies(self, filepath):
+        normalized = self._abspath(filepath)
+        relative = self._relpath(normalized)
+        paths = checks[file_type(normalized)]
+        self._add_deps(relative, (self._relpath(path) for path in paths))
 
     @walker
     def get_all_blend_dependencies(self, blend_file):
