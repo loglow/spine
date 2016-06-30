@@ -21,9 +21,10 @@ import os
 import bpy
 import json
 import magic
+import subprocess
 from collections import defaultdict
 
-from . import topsort
+from .topsort import Network
 
 
 LIBRARY_FILE = "library.json"
@@ -35,6 +36,18 @@ STANDARD_FOLDER_IGNORES = ['.svn']
 def is_blendfile(filepath):
     """ Check that a file is a blend file """
     return filepath.endswith('.blend')
+
+
+def file_type(filepath):
+    if is_blendfile(filepath): return "blend"
+    return "other"
+
+
+def get_blend_dependencies(filepath):
+    return eval(subprocess.check_output([blender, '-b', '/home/bassam/projects/hamp/tube/scenes/act_1/a1s03.blend', '-P', '/home/bassam/projects/org/spine/commandline/blender_query.py']))
+
+
+checks = {"blend": get_blend_dependencies}
 
 
 def abspath_path(filepath, rootpath):
@@ -64,17 +77,22 @@ def walker(fn):
     return wrapped
 
 
-class ProjectCrawler():
+class ProjectCrawler(Network):
     """ Crawl Over Entire Project Generating Dependency Graph """
 
     def __init__(self, path):
+        super().__init__()
         self.root = os.path.normpath(path)
         self.depedencies_file = os.path.join(self.root, DEPENDS_FILE)
         self.config_file = os.path.join(self.root, CONFIG_FILE)
         try:
-            self.data = json.loads(open(self.depedencies_file).read())
+            data = json.loads(open(self.depedencies_file).read())
         except:  # File doesn't exist use correct error
-            self._empty_data()
+            self._dependencies_write()
+        else:
+            self.nodes = set(data['nodes'])
+            for node in data['edges']:
+                self.edges[node] = set(data['edges'][node])
         try:
             self.config = json.loads(open(self.config_file).read())
         except:  # File doesn't exist use correct error
@@ -83,10 +101,17 @@ class ProjectCrawler():
 
     def _default_configs(self):
         self.config = {'ignore_folders': []}
-        json.
+        with open(self.config_file, mode='w') as config_file:
+            config_file.write(
+                json.dumps(self.config, sort_keys=True, indent=4))
 
-    def _empty_data(self):
-        pass
+    def _dependencies_write(self):
+        with open(self.dependencies_file, mode='w') as dependencies_file:
+            dependencies_file.write(json.dumps(
+                {
+                    'nodes':list(self.nodes),
+                    'edges':{nd: list(self.edges[nd]) for nd in self.edges}},
+                sort_keys=True, indent=4))
 
     def _relpath(self, path):
         return relpath_path(path, self.root)
@@ -113,7 +138,7 @@ class ProjectCrawler():
                     node,
                     {
                         'path':self._relpath(dependency),
-                        'filetype':get_file_type(dependency)})
+                        'filetype':file_type(dependency)})
 
     def check_file_dependencies(self, filepath):
         normalized = self._abspath(filepath)
