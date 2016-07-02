@@ -24,7 +24,7 @@ import magic
 import subprocess
 from collections import defaultdict
 
-from .topsort import Network
+from topsort import Network
 
 
 LIBRARY_FILE = "library.json"
@@ -44,7 +44,13 @@ def file_type(filepath):
 
 
 def get_blend_dependencies(filepath):
-    return eval(subprocess.check_output([blender, '-b', '/home/bassam/projects/hamp/tube/scenes/act_1/a1s03.blend', '-P', '/home/bassam/projects/org/spine/commandline/blender_query.py']))
+    """ currently stupid as it does not take libs into account """
+    import bpy
+    bpy.ops.wm.open_mainfile(filepath=filepath)
+    paths = (
+        bpy.path.abspath(path)
+        for path in bpy.utils.blend_paths(absolute=True))
+    return paths
 
 
 checks = {"blend": get_blend_dependencies}
@@ -54,7 +60,7 @@ def abspath_path(filepath, rootpath):
     """ Return absolute path from relative to root or just normalize """
     normalized = os.path.normpath(filepath) # Assume root is normalized
     if not rootpath in normalized:
-        normalized = os.path.join(root, normalized)
+        normalized = os.path.join(rootpath, normalized)
     return normalized
 
 
@@ -83,7 +89,7 @@ class ProjectCrawler(Network):
     def __init__(self, path):
         super().__init__()
         self.root = os.path.normpath(path)
-        self.depedencies_file = os.path.join(self.root, DEPENDS_FILE)
+        self.dependencies_file = os.path.join(self.root, DEPENDS_FILE)
         self.config_file = os.path.join(self.root, CONFIG_FILE)
         try:
             data = json.loads(open(self.depedencies_file).read())
@@ -120,9 +126,9 @@ class ProjectCrawler(Network):
         return abspath_path(path, self.root)
 
     def _add_deps(self, main, dependencies):
-        node = {'path': main}
+        node = (('path', main),)
         for dependency in dependencies:
-            self.network.add_edge(node, {'path': dependency})
+            self.add_edge(node, (('path', dependency),))
 
     def get_blendfile_dependencies(self, blend_file):
         normalized = self._abs_path(blend_file)
@@ -143,7 +149,7 @@ class ProjectCrawler(Network):
     def check_file_dependencies(self, filepath):
         normalized = self._abspath(filepath)
         relative = self._relpath(normalized)
-        paths = checks[file_type(normalized)]
+        paths = checks[file_type(normalized)](normalized)
         self._add_deps(relative, (self._relpath(path) for path in paths))
 
     @walker
