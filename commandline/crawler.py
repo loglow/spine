@@ -73,16 +73,6 @@ def relpath_path(filepath, rootpath):
         return normalized
 
 
-def walker(fn):
-
-    def wrapped(self, *args, **kwargs):
-        for check_dir in os.walk(self.root):
-            if all(folder not in check_dir[0] for folder in self.ignores):
-                for filename in check_dir[2]:
-                    fn(self, os.path.join(check_dir[0],filename))
-    return wrapped
-
-
 class ProjectCrawler(Network):
     """ Crawl Over Entire Project Generating Dependency Graph """
 
