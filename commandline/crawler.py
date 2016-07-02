@@ -23,6 +23,7 @@ import json
 import magic
 import subprocess
 from collections import defaultdict
+from bpy.utils import blend_paths
 
 from topsort import Network
 
@@ -45,11 +46,10 @@ def file_type(filepath):
 
 def get_blend_dependencies(filepath):
     """ currently stupid as it does not take libs into account """
-    import bpy
     bpy.ops.wm.open_mainfile(filepath=filepath)
     paths = (
-        bpy.path.abspath(path)
-        for path in bpy.utils.blend_paths(absolute=True))
+        p for p in blend_paths(absolute=True, packed=False, local=True)
+        if p not in ("/", "\\"))
     return paths
 
 
@@ -126,32 +126,24 @@ class ProjectCrawler(Network):
         return abspath_path(path, self.root)
 
     def _add_deps(self, main, dependencies):
-        node = (('path', main),)
         for dependency in dependencies:
-            self.add_edge(node, (('path', dependency),))
-
-    def get_blendfile_dependencies(self, blend_file):
-        normalized = self._abs_path(blend_file)
-        if is_blendfile(normalized):
-            bpy.ops.wm.open_mainfile(filepath=normalized)
-            paths = (
-                bpy.path.abspath(path)
-                for path in bpy.utils.blend_paths(absolute=True))
-            node = {'path':normalized, 'filetype': 'BLEND'}
-            self.network.add_node(node)
-            for dependency in paths:
-                self.network.add_edge(
-                    node,
-                    {
-                        'path':self._relpath(dependency),
-                        'filetype':file_type(dependency)})
+            self.add_edge(main, dependency)
 
     def check_file_dependencies(self, filepath):
         normalized = self._abspath(filepath)
         relative = self._relpath(normalized)
-        paths = checks[file_type(normalized)](normalized)
-        self._add_deps(relative, (self._relpath(path) for path in paths))
+        try:
+            paths = checks[file_type(normalized)](normalized)
+        except KeyError:
+            print("Can't check {}".format(file_type(normalized)))
+        else:
+            self._add_deps(relative, (self._relpath(path) for path in paths))
 
-    @walker
-    def get_all_blend_dependencies(self, blend_file):
-        self.get_blendfile_dependencies(blend_file)
+    def get_all_dependencies(self):
+        for check_dir in os.walk(self.root):
+            if all(folder not in check_dir[0] for folder in self.ignores):
+                for filename in check_dir[2]:
+                    print("Checking ", os.path.join(check_dir[0], filename))
+                    self.check_file_dependencies(
+                        os.path.join(check_dir[0], filename))
+        
