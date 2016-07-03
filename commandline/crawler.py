@@ -20,7 +20,7 @@
 import os
 import bpy
 import json
-import magic
+import magic  #XXX pip install python-magic
 import subprocess
 from collections import defaultdict
 from bpy.utils import blend_paths
@@ -34,26 +34,47 @@ CONFIG_FILE = "config.json"
 STANDARD_FOLDER_IGNORES = ['.svn']
 
 
-def is_blendfile(filepath):
-    """ Check that a file is a blend file """
-    return filepath.endswith('.blend')
+class BlendCheck():
+    """ Blend File Support Code """
+    extension = ".blend"
+
+    @classmethod
+    def poll(cls, filepath):
+        """ Check that a file is a blend file """
+        fm = magic.from_file(filepath)
+        return (
+            fm.startswith(b'Blender3D') or
+            (fm.startswith(b'gzip') and filepath.endswith(extension)))
+
+    @classmethod
+    def deps(cls, filepath):
+        """ Return file path dependencies list from filepath """
+        try:
+            bpy.ops.wm.open_mainfile(filepath=filepath)
+        except RuntimeError:
+            raise RuntimeError("Not a Blend File!")
+        return (
+            p for p in blend_paths(absolute=True, packed=False, local=True)
+            if p not in ("/", "\\"))
 
 
-def file_type(filepath):
-    if is_blendfile(filepath): return "blend"
-    return "other"
+class FileSupport():
 
+    def __init__(self, support_list):
+        self.checks = {cls.extension: cls.deps for cls in support_list}
+        self.polls = {cls.extension: cls.poll for cls in support_list}
 
-def get_blend_dependencies(filepath):
-    """ currently stupid as it does not take libs into account """
-    bpy.ops.wm.open_mainfile(filepath=filepath)
-    paths = (
-        p for p in blend_paths(absolute=True, packed=False, local=True)
-        if p not in ("/", "\\"))
-    return paths
+    def type(self, filepath):
+        for extension in self.polls:
+            if self.polls[extension](filepath):
+                return extension
 
-
-checks = {"blend": get_blend_dependencies}
+    def check(self, filepath):
+        extension = self.type(filepath)
+        if extension:
+            return self.checks[extension](filepath)
+        else:
+            return []
 
 
 def abspath_path(filepath, rootpath):
@@ -79,12 +100,13 @@ class ProjectCrawler(Network):
     def __init__(self, path):
         super().__init__()
         self.root = os.path.normpath(path)
+        self.file_support = FileSupport((BlendCheck,)) # TODO import checkers
         self.dependencies_file = os.path.join(self.root, DEPENDS_FILE)
         self.config_file = os.path.join(self.root, CONFIG_FILE)
         try:
-            data = json.loads(open(self.depedencies_file).read())
-        except:  # File doesn't exist use correct error
-            self._dependencies_write()
+            data = json.loads(open(self.dependencies_file).read())
+        except FileNotFoundError:
+            self.save()
         else:
             self.nodes = set(data['nodes'])
             for node in data['edges']:
@@ -101,7 +123,11 @@ class ProjectCrawler(Network):
             config_file.write(
                 json.dumps(self.config, sort_keys=True, indent=4))
 
-    def _dependencies_write(self):
+    def clear(self):
+        self.nodes = set()
+        self.edges = defaultdict(set)
+
+    def save(self):
         with open(self.dependencies_file, mode='w') as dependencies_file:
             dependencies_file.write(json.dumps(
                 {
@@ -116,24 +142,19 @@ class ProjectCrawler(Network):
         return abspath_path(path, self.root)
 
     def _add_deps(self, main, dependencies):
+        self.add_node(main)
         for dependency in dependencies:
             self.add_edge(main, dependency)
 
-    def check_file_dependencies(self, filepath):
+    def check_file(self, filepath):
         normalized = self._abspath(filepath)
         relative = self._relpath(normalized)
-        try:
-            paths = checks[file_type(normalized)](normalized)
-        except KeyError:
-            print("Can't check {}".format(file_type(normalized)))
-        else:
-            self._add_deps(relative, (self._relpath(path) for path in paths))
+        paths = self.file_support.check(normalized)
+        self._add_deps(relative, (self._relpath(path) for path in paths if self.root in path and os.path.isfile(path)))
 
-    def get_all_dependencies(self):
+    def check_project(self):
         for check_dir in os.walk(self.root):
             if all(folder not in check_dir[0] for folder in self.ignores):
                 for filename in check_dir[2]:
-                    print("Checking ", os.path.join(check_dir[0], filename))
-                    self.check_file_dependencies(
+                    self.check_file(
                         os.path.join(check_dir[0], filename))
-        
