@@ -27,7 +27,6 @@ from bpy.utils import blend_paths
 
 from topsort import Network
 
-
 LIBRARY_FILE = "library.json"
 DEPENDS_FILE = "dependencies.json"
 CONFIG_FILE = "config.json"
@@ -59,7 +58,10 @@ class BlendCheck():
 
 
 class FileSupport():
-
+    """
+    Convenience class allows us to dynamically wrap all our file-specific
+    checks into one handy function
+    """
     def __init__(self, support_list):
         self.checks = {cls.extension: cls.deps for cls in support_list}
         self.polls = {cls.extension: cls.poll for cls in support_list}
@@ -118,12 +120,14 @@ class ProjectCrawler(Network):
         self.ignores = STANDARD_FOLDER_IGNORES + self.config['ignore_folders']
 
     def _default_configs(self):
+        """ If no configs exist create an empty default file """
         self.config = {'ignore_folders': []}
         with open(self.config_file, mode='w') as config_file:
             config_file.write(
                 json.dumps(self.config, sort_keys=True, indent=4))
 
     def clear(self):
+        """ Flush old deps to start clean """
         self.nodes = set()
         self.edges = defaultdict(set)
 
@@ -147,12 +151,23 @@ class ProjectCrawler(Network):
             self.add_edge(main, dependency)
 
     def check_file(self, filepath):
+        """
+        Check a single file in the project can be triggered on file changes,
+        repository checks, etc.
+        """
         normalized = self._abspath(filepath)
         relative = self._relpath(normalized)
         paths = self.file_support.check(normalized)
-        self._add_deps(relative, (self._relpath(path) for path in paths if self.root in path and os.path.isfile(path)))
+        #TODO For now we'll ignore missing or out of tree paths
+        self._add_deps(relative, (
+            self._relpath(path) for path in paths
+            if self.root in path and os.path.isfile(path)))
 
     def check_project(self):
+        """
+        Walk over entire project folder finding deps for each file
+        if those files are of types that have dependency checkers
+        """
         for check_dir in os.walk(self.root):
             if all(folder not in check_dir[0] for folder in self.ignores):
                 for filename in check_dir[2]:
