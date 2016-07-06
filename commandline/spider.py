@@ -64,50 +64,14 @@ initial commit issues:
 
 import pysvn
 import os
-import bpy
 import json
-import magic
-from collections import defaultdict
 
-from . import topsort
 
 
 LIBRARY_FILE = "library.json"
 DEPENDS_FILE = "dependencies.json"
 CONFIG_FILE = "config.json"
 STANDARD_FOLDER_IGNORES = ['.svn']
-
-
-def is_blendfile(filepath):
-    """ Check that a file is a blend file """
-    return filepath.endswith('.blend')
-
-
-def abspath_path(filepath, rootpath):
-    """ Return absolute path from relative to root or just normalize """
-    normalized = os.path.normpath(filepath) # Assume root is normalized
-    if not rootpath in normalized:
-        normalized = os.path.join(root, normalized)
-    return normalized
-
-
-def relpath_path(filepath, rootpath):
-    """ Return absolute path based on root """
-    normalized = os.path.normpath(filepath)
-    if rootpath in normalized:
-        return os.path.relpath(normalized, rootpath)
-    else:
-        return normalized
-
-
-def walker(fn):
-
-    def wrapped(self, *args, **kwargs):
-        for check_dir in os.walk(self.root):
-            if all(folder not in check_dir[0] for folder in self.ignores):
-                for filename in check_dir[2]:
-                    fn(self, os.path.join(check_dir[0],filename))
-    return wrapped
 
 
 class ProjectTree():
@@ -117,6 +81,7 @@ class ProjectTree():
         def get_login():
             pass
         self.client = pysvn.Client()
+        self.client.callback_get_login = self._get_login
         self.root = os.path.normpath(path)
         if not os.path.exists(self.root):
             self._checkout_empty_project()
@@ -129,6 +94,11 @@ class ProjectTree():
             return self.client.info(self.root).url
         return url
 
+    def _get_login(self, realm, username, may_save):
+        available = all(
+            prop is not None for prop in (self.user, self.password))
+        return availabe, self.user, self.password, True
+
     def _checkout_empty_project(self):
         self.client.checkout(self.url, self.path, recurse=False)
 
@@ -137,55 +107,23 @@ class ProjectTree():
         self.client.update(
             full_path,
             depth=pysvn.depth.empty,
-            make_parents=True)                
+            make_parents=True)
 
     def _rel_path(self, path):
-        norm = os.path.normpath(path) 
+        norm = os.path.normpath(path)
         if norm.startswith(self.root):
             return os.path.relpath(norm, self.root)
         else:
             return norm
 
     def _abs_path(self, path):
-        return os.path.abspath(os.path.join(self.root, os.path.norm(path))) 
+        return os.path.abspath(os.path.join(self.root, os.path.normpath(path)))
 
+    def all_files(self):
+        """ Return all the files in SVN """
+        bases = (
+            p[0].repos_path[1:]
+            for p in self.client.list(self.url, recurse=True))
+        return (
+            f[1:] for f in bases if f and os.path.isfile(self._abs_path(f[1:])))
 
-class ProjectCrawler():
-    """ Crawl Over Entire Project Generating Dependency Graph """
-
-    def __init__(self, path):
-        self.root = os.path.normpath(path)
-        self.depedencies_file = os.path.join(self.root, DEPENDS_FILE)
-        self.config_file = os.path.join(self.root, CONFIG_FILE)
-        if not any(os.path.exists(fn) in (
-                self.dependencies_file, self.config_file)):
-            raise IOError('Not a Project Folder')
-        self.data = json.loads(open(self.depedencies_file).read())
-        self.config = json.loads(open(self.config_file).read())
-        self.ignores = STANDARD_FOLDER_IGNORES + self.config.ignore_folders
-
-    def self._relpath(path):
-        return relpath_path(path, self.root)
-
-    def self._abspath(path):
-        return abspath_path(path, self.root)
-
-    def get_blendfile_dependencies(self, blend_file):
-        normalized = self._abs_path(blend_file)
-        if is_blendfile(normalized):
-            bpy.ops.wm.open_mainfile(filepath=normalized)
-            paths = (
-                bpy.path.abspath(path)
-                for path in bpy.utils.blend_paths(absolute=True))
-            node = {'path':normalized, 'filetype': 'BLEND'}
-            self.network.add_node(node)
-            for dependency in paths:
-                self.network.add_edge(
-                    node,
-                    {
-                        'path':self._relpath(dependency),
-                        'filetype':get_file_type(dependency)})
-
-    @walker
-    def get_all_blend_dependencies(self, blend_file):
-        self.get_blendfile_dependencies(blend_file)

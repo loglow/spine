@@ -42,7 +42,7 @@ class BlendCheck():
         """ Check that a file is a blend file """
         fm = magic.from_file(filepath)
         return (
-            fm.startswith('Blender3D') or
+            fm.startswith('Blender3D, saved') or
             (fm.startswith('gzip') and filepath.endswith(cls.extension)))
 
     @classmethod
@@ -51,7 +51,9 @@ class BlendCheck():
         try:
             bpy.ops.wm.open_mainfile(filepath=filepath)
         except RuntimeError:
-            raise RuntimeError("Not a Blend File!")
+            # raise RuntimeError("Not a Blend File!") #XXX shouldn't happen
+            print("NOT A BLEND FILE:",filepath)
+            return []
         return (
             p for p in blend_paths(absolute=True, packed=False, local=True)
             if p not in ("/", "\\"))
@@ -163,12 +165,12 @@ class ProjectCrawler(Network):
             self._relpath(path) for path in paths
             if self.root in path and os.path.isfile(path)))
 
-	def check_files(self, filelist):
-     	"""
-     	Check a list of files given from another source, e.g. svn status
-     	"""
-     	for filepath in filelist:
-        	self.check_file(filepath)
+    def check_files(self, filelist):
+        """
+        Check a list of files given from another source, e.g. svn status
+        """
+        for filepath in filelist:
+            self.check_file(filepath)
 
     def check_project(self):
         """
