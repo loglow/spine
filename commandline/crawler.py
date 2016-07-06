@@ -30,7 +30,7 @@ from topsort import Network
 LIBRARY_FILE = "library.json"
 DEPENDS_FILE = "dependencies.json"
 CONFIG_FILE = "config.json"
-STANDARD_FOLDER_IGNORES = ['.svn']
+STANDARD_FOLDER_IGNORES = ['.svn', '.git']
 
 
 class BlendCheck():
@@ -42,8 +42,8 @@ class BlendCheck():
         """ Check that a file is a blend file """
         fm = magic.from_file(filepath)
         return (
-            fm.startswith(b'Blender3D') or
-            (fm.startswith(b'gzip') and filepath.endswith(extension)))
+            fm.startswith('Blender3D') or
+            (fm.startswith('gzip') and filepath.endswith(cls.extension)))
 
     @classmethod
     def deps(cls, filepath):
@@ -162,6 +162,13 @@ class ProjectCrawler(Network):
         self._add_deps(relative, (
             self._relpath(path) for path in paths
             if self.root in path and os.path.isfile(path)))
+
+	def check_files(self, filelist):
+     	"""
+     	Check a list of files given from another source, e.g. svn status
+     	"""
+     	for filepath in filelist:
+        	self.check_file(filepath)
 
     def check_project(self):
         """
