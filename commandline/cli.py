@@ -2,7 +2,6 @@ import sys
 import json
 import os
 
-import crawler
 import spider
 import topsort
 
