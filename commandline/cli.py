@@ -1,22 +1,23 @@
+#!/usr/bin/python3
 import sys
 import json
 import os
+import argparse
 
 import spider
 import topsort
 
 
-ROOT="/home/bassam/projects/hamp/tube"
-PATH = sys.argv[-1] #TODO should check errors once
-svn = spider.ProjectTree(ROOT)
-DEPENDS_FILE = "dependencies.json"
-CONFIG_FILE = "config.json"
+DEPENDS_FILE = "dependencies.json" # Lives in Project Root
+CONFIG_FILE = "config.json" # Project Config, lives in project root
 STANDARD_FOLDER_IGNORES = ['.svn', '.git']
 
-class Hierarchy(topsort.Network):
-    def __init__(self, path):
-        super().__init__()
-        self.root = os.path.normpath(path)
+CONFIGS = "cliconfigs.json"
+
+class Hierarchy(topsort.Network, spider.ProjectTree):
+    def __init__(self, path, url=None, user=None, password=None):
+        spider.ProjectTree.__init__(self, path, url, user, password)
+        topsort.Network.__init__(self)
         self.dependencies_file = os.path.join(self.root, DEPENDS_FILE)
         self.config_file = os.path.join(self.root, CONFIG_FILE)
         data = json.loads(open(self.dependencies_file).read())
@@ -25,7 +26,6 @@ class Hierarchy(topsort.Network):
             self.edges[node] = set(data['edges'][node])
         self.config = json.loads(open(self.config_file).read())
         self.ignores = STANDARD_FOLDER_IGNORES + self.config['ignore_folders']
-
 
     def _deep_deps(self, filepath):
         # assume relative for now
@@ -38,7 +38,33 @@ class Hierarchy(topsort.Network):
         deps.add(filepath)
         return deps
 
-
     def update(self, filepath):
-        deps = _deep_deps(filepath)
-                
+        deps = self._deep_deps(filepath)
+        for dep in deps:
+            print("Getting ", dep)
+            self._update_path(dep)
+
+
+def get_configs():
+    try:
+        config = json.loads(open(os.path.join(
+            os.path.dirname(__file__),
+            CONFIGS)).read())
+    except FileNotFoundError:
+        print("Error: No Config")
+        print()
+        print("       Create a {} file in {}".format(
+            CONFIGS,
+            os.path.dirname(__file__)))
+        print("       with the following contents, including quotes:")
+        print("")
+        print('{"password": "your_svn_password","root": "project/root/folder", "url": "svn://url", "user": "your_svn_username"}')
+        print()
+        print()
+        raise FileNotFoundError("Exiting")
+    else:
+        return config
+
+
+if __name__ == "__main__":
+    print("Command Line Tools for JSON Temp Experiments")
