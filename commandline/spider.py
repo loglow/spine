@@ -67,13 +67,6 @@ import os
 import json
 
 
-
-LIBRARY_FILE = "library.json"
-DEPENDS_FILE = "dependencies.json"
-CONFIG_FILE = "config.json"
-STANDARD_FOLDER_IGNORES = ['.svn']
-
-
 class ProjectTree():
     """ Smart subversion wrapper with knowledge of project depedencies """
 
@@ -91,9 +84,7 @@ class ProjectTree():
         self.password = password
 
     def _get_url(self, url):
-        if not url:
-            return self.client.info(self.root).url
-        return url
+        return self.client.info(self.root).url
 
     def _get_login(self, realm, username, may_save):
         available = all(
