@@ -1,0 +1,6 @@
+{
+    "password": "mygreatpassword",
+    "root": "my/full/project/root/path",
+    "url": "mysvnurl",
+    "user": "myusername"
+}
