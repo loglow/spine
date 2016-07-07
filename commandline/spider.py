@@ -84,6 +84,7 @@ class ProjectTree():
         self.client.callback_get_login = self._get_login
         self.root = os.path.normpath(path)
         if not os.path.exists(self.root):
+            self.url = url
             self._checkout_empty_project()
         self.url = self._get_url(url)
         self.user = user
@@ -100,7 +101,7 @@ class ProjectTree():
         return availabe, self.user, self.password, True
 
     def _checkout_empty_project(self):
-        self.client.checkout(self.url, self.path, recurse=False)
+        self.client.checkout(self.url, self.root, recurse=False)
 
     def _update_path(self, path):
         full_path = self._abs_path(self._rel_path(path))
