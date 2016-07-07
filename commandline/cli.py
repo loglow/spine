@@ -26,6 +26,17 @@ class Hierarchy(topsort.Network):
     self.config = json.loads(open(self.config_file).read())
     self.ignores = STANDARD_FOLDER_IGNORES + self.config['ignore_folders']
 
+    def _get_deps(self, deps):
+        subdeps = set()
+        for dep in deps:
+            if dep in self.edges:
+                subdeps.add(sub for sub in self.edges[dep])
+
+
+
     def update(self, filepath):
         # assume relative for now
+        full_deps = _get_deps([filepath])
+        for dep in full_deps:
+            svn._update_path(dep)
         
