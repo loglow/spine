@@ -36,13 +36,16 @@ class File(models.Model):
 	path = models.CharField(max_length=200)
 	#type
 	repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
-	#latest_version
+	last_version = models.CharField(max_length=20, default=0)
+	last_edited = models.DateTimeField(null=True)
 	#version_control
 	#status
 
-class Edge(models.Model):
-	main_file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='main_edge_set')
-	depend_file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='depend_edge_set')
-	main_version = models.PositiveIntegerField(default=0)
-	depend_version = models.PositiveIntegerField(default=0)
+class Depend(models.Model):
+	master = models.ForeignKey(File, on_delete=models.CASCADE, related_name='depend_from_set')
+	dependency = models.ForeignKey(File, on_delete=models.CASCADE, related_name='depend_to_set')
+	master_version = models.PositiveIntegerField(default=0)
+	dependency_version = models.PositiveIntegerField(default=0)
+	master_last_edited = models.DateTimeField(null=True)
+	dependency_last_edited = models.DateTimeField(null=True)
 	#generator
