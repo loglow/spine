@@ -25,7 +25,7 @@ class Repo(models.Model):
 		('MERC', 'Mercurial'),
 		('GIT', 'Git'),
 	)
-	root_path = models.CharField(max_length=200)
+	root_path = models.CharField(max_length=200, default='/')
 	repo_type = models.CharField(
 		max_length=4,
 		choices=REPO_TYPE_CHOICES,
@@ -41,8 +41,8 @@ class File(models.Model):
 	#status
 
 class Edge(models.Model):
-	main_file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='main_set')
-	depend_file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='depend_set')
+	main_file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='main_edge_set')
+	depend_file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='depend_edge_set')
 	main_version = models.PositiveIntegerField(default=0)
 	depend_version = models.PositiveIntegerField(default=0)
 	#generator
