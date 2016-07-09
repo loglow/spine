@@ -16,10 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import os
+from django.apps import AppConfig
 
-from django.core.wsgi import get_wsgi_application
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spine.settings")
-
-application = get_wsgi_application()
+class SpineCoreConfig(AppConfig):
+    name = 'spine_core'

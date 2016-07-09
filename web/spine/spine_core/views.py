@@ -16,10 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import os
+from django.shortcuts import render
+from django.http import HttpResponse
 
-from django.core.wsgi import get_wsgi_application
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spine.settings")
-
-application = get_wsgi_application()
+def index(request):
+    return HttpResponse("spine-core")
