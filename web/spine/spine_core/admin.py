@@ -18,8 +18,8 @@
 
 from django.contrib import admin
 
-from .models import Repo, File, Edge
+from .models import Repo, File, Depend
 
 admin.site.register(Repo)
 admin.site.register(File)
-admin.site.register(Edge)
+admin.site.register(Depend)
