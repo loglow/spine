@@ -16,10 +16,10 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import os
+from django.conf.urls import url
 
-from django.core.wsgi import get_wsgi_application
+from . import views
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spine.settings")
-
-application = get_wsgi_application()
+urlpatterns = [
+    url(r'^$', views.index, name='index'),
+]

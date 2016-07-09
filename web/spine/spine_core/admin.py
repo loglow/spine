@@ -16,10 +16,10 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import os
+from django.contrib import admin
 
-from django.core.wsgi import get_wsgi_application
+from .models import Repo, File, Edge
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spine.settings")
-
-application = get_wsgi_application()
+admin.site.register(Repo)
+admin.site.register(File)
+admin.site.register(Edge)
