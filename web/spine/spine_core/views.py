@@ -16,35 +16,37 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts get_object_or_404, import render
 from django.http import HttpResponse
+from django.views.generic import DetailView
 from .spider import ProjectTree
-from .models import Repo
+from .models import Repo, File, Depend
 
 def index(request):
-    return HttpResponse("spine-core")
+    repo_list = Repo.objects.all()
+    file_list = File.objects.all()
+    depend_list = Depend.objects.all()
+    context = {
+        'repo_list': repo_list,
+        'file_list': file_list,
+        'depend_list': depend_list,
+    }
+    return render(request, 'spine_core/index.html', context)
 
+class RepoView(DetailView):
+    model = Repo
+    template_name = 'spine_core/repo.html'
+
+class FileView(DetailView):
+    model = File
+    template_name = 'spine_core/file.html'
+
+class DependView(DetailView):
+    model = Depend
+    template_name = 'spine_core/depend.html'
 
 def repo_test(request, repo_id):
     repo = get_object_or_404(Repo, pk=repo_id)
     spider = ProjectTree(repo.root_path, url=repo.url)
     return HttpResponse('<br>'.join(spider.all_files()))
 
-
-def vote(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(request, 'polls/detail.html', {
-            'question': question,
-            'error_message': "You didn't select a choice.",
-        })
-    else:
-        selected_choice.votes += 1
-        selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
