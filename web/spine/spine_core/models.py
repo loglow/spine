@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from django.db import models
+from os.path import join
 
 class Repo(models.Model):
     REPO_TYPE_CHOICES = (
@@ -38,45 +39,18 @@ class Repo(models.Model):
         return self.name
 
 class File(models.Model):
-    FILE_TYPE_CHOICES = (
-        ('3D Media', (
-            ('BLEND', 'Blender'),
-            ('MA', 'Maya ASCII'),
-            ('MB', 'Maya Binary'),
-            ('OBJ', 'Wavefront'),
-        )),
-        ('2D Media', (
-            ('PNG', 'Portable Network Graphics'),
-            ('KRA', 'Krita'),
-            ('XCF', 'GIMP'),
-            ('PSD', 'Adobe Photoshop'),
-            ('AI', 'Adobe Illustrator'),
-            ('SVG', 'Scalable Vector Graphics'),
-            ('TIFF', 'Tagged Image File Format'),
-            ('JPG', 'JPEG'),
-            ('EXR', 'OpenEXR'),
-        )),
-        ('Text Data', (
-            ('TXT', 'Plain Text'),
-            ('PY', 'Python'),
-            ('MD', 'Markdown'),
-            ('HTML', 'Hypertext Markup Language'),
-            ('CSS', 'Cascading Style Sheets'),
-        )),
-        ('OTHER', 'Other'),
-    )
     path = models.CharField(max_length=200)
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
     last_version = models.CharField(max_length=20)
     last_edited = models.DateTimeField()
-    file_type = models.CharField(
-        max_length=8,
-        choices=FILE_TYPE_CHOICES,
-        default='OTHER',
-    )
+    file_type = models.CharField(max_length=200)
+    mime_type = models.CharField(max_length=50)
 
     def __str__(self):
         return self.path
+
+    def get_full_path(self):
+        return join(self.repo.root_path, self.path)
 
 class Depend(models.Model):
     master_file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='master_set')
