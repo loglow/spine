@@ -27,22 +27,53 @@ class Repo(models.Model):
     )
     root_path = models.CharField(max_length=200)
     repo_type = models.CharField(
-        max_length=4,
+        max_length=8,
         choices=REPO_TYPE_CHOICES,
+        default='NONE',
     )
     url = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.root_path
+        return self.name
 
 class File(models.Model):
+    FILE_TYPE_CHOICES = (
+        ('3D Media', (
+            ('BLEND', 'Blender'),
+            ('MA', 'Maya ASCII'),
+            ('MB', 'Maya Binary'),
+            ('OBJ', 'Wavefront'),
+        )),
+        ('2D Media', (
+            ('PNG', 'Portable Network Graphics'),
+            ('KRA', 'Krita'),
+            ('XCF', 'GIMP'),
+            ('PSD', 'Adobe Photoshop'),
+            ('AI', 'Adobe Illustrator'),
+            ('SVG', 'Scalable Vector Graphics'),
+            ('TIFF', 'Tagged Image File Format'),
+            ('JPG', 'JPEG'),
+            ('EXR', 'OpenEXR'),
+        )),
+        ('Text Data', (
+            ('TXT', 'Plain Text'),
+            ('PY', 'Python'),
+            ('MD', 'Markdown'),
+            ('HTML', 'Hypertext Markup Language'),
+            ('CSS', 'Cascading Style Sheets'),
+        )),
+        ('OTHER', 'Other'),
+    )
     path = models.CharField(max_length=200)
-    #type
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
     last_version = models.CharField(max_length=20)
     last_edited = models.DateTimeField()
-    #version_control
-    #status
+    file_type = models.CharField(
+        max_length=8,
+        choices=FILE_TYPE_CHOICES,
+        default='OTHER',
+    )
 
     def __str__(self):
         return self.path
@@ -54,7 +85,6 @@ class Depend(models.Model):
     depend_version = models.PositiveIntegerField()
     master_last_edited = models.DateTimeField()
     depend_last_edited = models.DateTimeField()
-    #generator
 
     def __str__(self):
         return str(self.master_file)+' \u2192 '+str(self.depend_file)
