@@ -1,13 +1,11 @@
 {% extends 'spine_core/base.html' %}
 
-{% block title %}Spine{% endblock %}
-
-{% block header %}Spine{% endblock %}
+{% block title %}{{ block.super }} | {% block subheader %}Index{% endblock %}{% endblock %}
 
 {% block content %}
 
 <div class="list-group">
-    <div class="list-group-item active">
+    <div class="list-group-item list-group-item-header">
         Repos
         <span class="badge">{{ repo_list|length }}</span>
     </div>
@@ -17,7 +15,7 @@
 </div>
 
 <div class="list-group">
-    <div class="list-group-item active">
+    <div class="list-group-item list-group-item-header">
         Files
         <span class="badge">{{ file_list|length }}</span>
     </div>
@@ -27,7 +25,7 @@
 </div>
 
 <div class="list-group">
-    <div class="list-group-item active">
+    <div class="list-group-item list-group-item-header">
         Depends
         <span class="badge">{{ depend_list|length }}</span>
     </div>

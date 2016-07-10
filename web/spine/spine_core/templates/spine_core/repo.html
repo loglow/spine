@@ -1,12 +1,10 @@
 {% extends 'spine_core/base.html' %}
 
-{% block title %}{{ repo }}{% endblock %}
-
-{% block header %}{{ repo }}{% endblock %}
+{% block title %}{{ block.super }} | {% block header %}Repo{% endblock %} | {% block subheader %}{{ repo }}{% endblock %}{% endblock %}
 
 {% block content %}
 
-<table class="table table-striped table-bordered">
+<table class="table table-hover table-bordered">
     <thead>
         <tr><th>Attribute</th><th>Value</th></tr>
     </thead>
@@ -16,5 +14,15 @@
         <tr><td>URL</td><td>{{ repo.url }}</td></tr>
     </tbody>
 </table>
+
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
+        Files
+        <span class="badge">{{ repo.file_set.all.count }}</span>
+    </div>
+    {% for file in repo.file_set.all %}
+    <a class="list-group-item" href="{% url 'spine_core:file' file.id %}">{{ file }}</a>
+    {% endfor %}
+</div>
 
 {% endblock %}
