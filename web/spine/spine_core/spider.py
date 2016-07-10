@@ -16,55 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-"""
-Subversion Partial Inter-Dependency Ranger
-Spider does the following:
-  Perform a sparse directory-only checkout from project svn
-  Provide an api for extracting a specific file via update
-  Use of dependencies (cached?) to extract a thing
-"""
-
-"""
-checkout only the top level folder of a project, includes:
-library.json , some kind of dependency tree
-to check out a file
-
-some ideas:
-- initial 'smarts' are in data and on client side
-- each project needs a unique project ID
-- automatic dependency crawlers, potentially using bpy, gimp api, others
-- manual dependency addition
-- external project ID based recognition for future cross project dependencies
-- untracked 'generated' folder management with own method of retreiving caches  (if available) or regenerating based on recepies (if available)
-- metadata for generated files, problem with reproducability
-
-start with:
-- enhance library.json by nesting asset data one deeper, allowing extra data
-- implement crawler api + blend based crawler
-- ignore generated issue
-- ignore cross project deps but:
-- create project ID
-
-reference desk enhancements
-- update reference desk to be smarter with data types *
-- generic posthooks *
-- image previews *
-- compatibility with library.json changes
-- project browser and:
-- commit capability
-- update capability
-
-initial commit issues:
-- single file based commit (easy from blender)
-- easy show uncommited files
-
-* these options unrelelated to spider
-
-"""
-
 import pysvn
 import os
-import json
 
 
 class ProjectTree():
@@ -117,3 +70,4 @@ class ProjectTree():
             p[0].repos_path[1:]
             for p in self.client.list(self.url, recurse=True))
         return (
+            f[1:] for f in bases if f and os.path.isfile(self._abs_path(f[1:])))
