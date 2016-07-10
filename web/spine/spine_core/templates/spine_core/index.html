@@ -1,0 +1,28 @@
+<h1>spine-core</h1>
+
+<hr>
+
+<h2>Repos</h2>
+<ul>
+{% for repo in repo_list %}
+    <li><a href="{% url 'spine_core:repo' repo.id %}">{{ repo.root_path }}</a></li>
+{% endfor %}
+</ul>
+
+<hr>
+
+<h2>Files</h2>
+<ul>
+{% for file in file_list %}
+    <li><a href="{% url 'spine_core:file' file.id %}">{{ file.path }}</a></li>
+{% endfor %}
+</ul>
+
+<hr>
+
+<h2>Depend</h2>
+<ul>
+{% for depend in depend_list %}
+    <li><a href="{% url 'spine_core:depend' depend.id %}">{{ depend }}</a></li>
+{% endfor %}
+</ul>
