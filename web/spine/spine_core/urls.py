@@ -22,4 +22,5 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^tests/(?P<repo_id>[0-9]+)/$', views.repo_test, name='repo_test'),
 ]
