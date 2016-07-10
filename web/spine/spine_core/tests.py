@@ -17,21 +17,3 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from django.test import TestCase
-
-from .models import Repo
-
-class RepoModelTests(TestCase):
-
-    def test_repo_with_blank_root(self):
-        """
-        Repo should not be able to be created without a root.
-        """
-        blank_repo = Repo.objects.create()
-        self.assertNotEqual(blank_repo.root_path, '')
-
-    def test_repo_with_blank_type(self):
-        """
-        Repo should not be able to be created without a type.
-        """
-        blank_repo = Repo.objects.create()
-        self.assertNotEqual(blank_repo.repo_type, '')

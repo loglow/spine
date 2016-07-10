@@ -20,6 +20,15 @@ from django.contrib import admin
 
 from .models import Repo, File, Depend
 
-admin.site.register(Repo)
-admin.site.register(File)
-admin.site.register(Depend)
+class RepoAdmin(admin.ModelAdmin):
+	list_display = ('root_path', 'repo_type', 'url')
+
+class FileAdmin(admin.ModelAdmin):
+	list_display = ('path', 'repo', 'last_version', 'last_edited')
+
+class DependAdmin(admin.ModelAdmin):
+	list_display = ('__str__', 'master_file', 'master_version', 'master_last_edited', 'depend_file', 'depend_version', 'depend_last_edited')
+
+admin.site.register(Repo, RepoAdmin)
+admin.site.register(File, FileAdmin)
+admin.site.register(Depend, DependAdmin)
