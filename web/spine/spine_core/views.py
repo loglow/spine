@@ -45,8 +45,15 @@ class DependView(DetailView):
     model = Depend
     template_name = 'spine_core/depend.html'
 
-def repo_test(request, repo_id):
+class TestsView(DetailView):
+    model = Repo
+    template_name = 'spine_core/repo_tests.html'
+    # repo = get_object_or_404(Repo, pk=repo_id)
+    # spider = ProjectTree(repo.root_path, url=repo.url)
+    # return HttpResponse('<br>'.join(spider.all_files()))
+
+
+def update(request, repo_id):
     repo = get_object_or_404(Repo, pk=repo_id)
     spider = ProjectTree(repo.root_path, url=repo.url)
     return HttpResponse('<br>'.join(spider.all_files()))
-
