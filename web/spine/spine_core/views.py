@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from django.shortcuts get_object_or_404, import render
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.views.generic import DetailView
 from .spider import ProjectTree
