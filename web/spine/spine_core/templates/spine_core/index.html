@@ -1,28 +1,39 @@
-<h1>spine-core</h1>
+{% extends 'spine_core/base.html' %}
 
-<hr>
+{% block title %}Spine{% endblock %}
 
-<h2>Repos</h2>
-<ul>
-{% for repo in repo_list %}
-    <li><a href="{% url 'spine_core:repo' repo.id %}">{{ repo.root_path }}</a></li>
-{% endfor %}
-</ul>
+{% block header %}Spine{% endblock %}
 
-<hr>
+{% block content %}
 
-<h2>Files</h2>
-<ul>
-{% for file in file_list %}
-    <li><a href="{% url 'spine_core:file' file.id %}">{{ file.path }}</a></li>
-{% endfor %}
-</ul>
+<div class="list-group">
+    <div class="list-group-item active">
+        Repos
+        <span class="badge">{{ repo_list|length }}</span>
+    </div>
+    {% for repo in repo_list %}
+    <a class="list-group-item" href="{% url 'spine_core:repo' repo.id %}">{{ repo }}</a>
+    {% endfor %}
+</div>
 
-<hr>
+<div class="list-group">
+    <div class="list-group-item active">
+        Files
+        <span class="badge">{{ file_list|length }}</span>
+    </div>
+    {% for file in file_list %}
+    <a class="list-group-item" href="{% url 'spine_core:file' file.id %}">{{ file }}</a>
+    {% endfor %}
+</div>
 
-<h2>Depend</h2>
-<ul>
-{% for depend in depend_list %}
-    <li><a href="{% url 'spine_core:depend' depend.id %}">{{ depend }}</a></li>
-{% endfor %}
-</ul>
+<div class="list-group">
+    <div class="list-group-item active">
+        Depends
+        <span class="badge">{{ depend_list|length }}</span>
+    </div>
+    {% for depend in depend_list %}
+    <a class="list-group-item" href="{% url 'spine_core:depend' depend.id %}">{{ depend }}</a>
+    {% endfor %}
+</div>
+
+{% endblock %}
