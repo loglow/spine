@@ -18,7 +18,8 @@
 
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
-from ../../../commandline/spider import ProjectTree
+from .spider import ProjectTree
+from .models import Repo
 
 def index(request):
     return HttpResponse("spine-core")
@@ -27,7 +28,7 @@ def index(request):
 def repo_test(request, repo_id):
     repo = get_object_or_404(Repo, pk=repo_id)
     spider = ProjectTree(repo.root_path, url=repo.url)
-    return HttpResponse('\n'.join(spider.all_files()))
+    return HttpResponse('<br>'.join(spider.all_files()))
 
 
 def vote(request, question_id):
