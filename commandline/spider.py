@@ -117,4 +117,3 @@ class ProjectTree():
             p[0].repos_path[1:]
             for p in self.client.list(self.url, recurse=True))
         return (
-            f[1:] for f in bases if f and os.path.isfile(self._abs_path(f[1:])))
