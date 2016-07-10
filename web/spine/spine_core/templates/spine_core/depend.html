@@ -6,4 +6,18 @@
 
 {% block content %}
 
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr><th>Attribute</th><th>Value</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Master File</td><td>{{ depend.master_file }}</td></tr>
+        <tr><td>Depend File</td><td>{{ depend.depend_file }}</td></tr>
+        <tr><td>Master Version</td><td>{{ depend.master_version }}</td></tr>
+        <tr><td>Depend Version</td><td>{{ depend.depend_version }}</td></tr>
+        <tr><td>Master Last Edited</td><td>{{ depend.master_last_edited }}</td></tr>
+        <tr><td>Depend Last Edited</td><td>{{ depend.depend_last_edited }}</td></tr>
+    </tbody>
+</table>
+
 {% endblock %}
