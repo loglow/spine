@@ -4,15 +4,16 @@
 
 {% block content %}
 
-<table class="table table-hover table-bordered">
+<table class="table table-bordered">
     <thead>
         <tr><th>Attribute</th><th>Value</th></tr>
     </thead>
     <tbody>
-        <tr><td>Name</td><td>{{ repo.name }}</td></tr>
-        <tr><td>Root Path</td><td>{{ repo.root_path }}</td></tr>
-        <tr><td>Type</td><td>{{ repo.get_repo_type_display }}</td></tr>
-        <tr><td>URL</td><td>{{ repo.url }}</td></tr>
+        <tr><th>ID</th><td>{{ repo.id }}</td></tr>
+        <tr><th>Name</th><td>{{ repo.name }}</td></tr>
+        <tr><th>Root Path</th><td>{{ repo.root_path }}</td></tr>
+        <tr><th>Type</th><td>{{ repo.get_repo_type_display }}</td></tr>
+        <tr><th>URL</th><td>{{ repo.url }}</td></tr>
     </tbody>
 </table>
 

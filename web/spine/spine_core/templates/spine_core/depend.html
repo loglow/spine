@@ -4,17 +4,18 @@
 
 {% block content %}
 
-<table class="table table-hover table-bordered">
+<table class="table table-bordered">
     <thead>
         <tr><th>Attribute</th><th>Value</th></tr>
     </thead>
     <tbody>
-        <tr><td>Master File</td><td><a href="{% url 'spine_core:file' depend.master_file.id %}">{{ depend.master_file }}</a></td></tr>
-        <tr><td>Depend File</td><td><a href="{% url 'spine_core:file' depend.depend_file.id %}">{{ depend.depend_file }}</a></td></tr>
-        <tr><td>Master Version</td><td>{{ depend.master_version }}</td></tr>
-        <tr><td>Depend Version</td><td>{{ depend.depend_version }}</td></tr>
-        <tr><td>Master Last Edited</td><td>{{ depend.master_last_edited }}</td></tr>
-        <tr><td>Depend Last Edited</td><td>{{ depend.depend_last_edited }}</td></tr>
+        <tr><th>ID</th><td>{{ depend.id }}</td></tr>
+        <tr><th>Master File</th><td><a href="{% url 'spine_core:file' depend.master_file.id %}">{{ depend.master_file }}</a></td></tr>
+        <tr><th>Master Version</th><td>{{ depend.master_version }}</td></tr>
+        <tr><th>Master Last Edited</th><td>{{ depend.master_last_edited }}</td></tr>
+        <tr><th>Depend File</th><td><a href="{% url 'spine_core:file' depend.depend_file.id %}">{{ depend.depend_file }}</a></td></tr>
+        <tr><th>Depend Version</th><td>{{ depend.depend_version }}</td></tr>
+        <tr><th>Depend Last Edited</th><td>{{ depend.depend_last_edited }}</td></tr>
     </tbody>
 </table>
 
