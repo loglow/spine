@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Spine{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'spine_core/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'spine_core/bootstrap-3.3.6/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'spine_core/font-awesome-4.6.3/css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'spine_core/style.css' %}">
 </head>
 <body>
@@ -20,7 +21,7 @@
     </div>
     {% block content %}{% endblock %}
 </div>
-<script src="{% static 'spine_core/jquery-2.2.4.min.js' %}"></script>
-<script src="{% static 'spine_core/bootstrap.min.js' %}"></script>
+<script src="{% static 'spine_core/jquery-2.2.4/jquery.min.js' %}"></script>
+<script src="{% static 'spine_core/bootstrap-3.3.6/bootstrap.min.js' %}"></script>
 </body>
 </html>

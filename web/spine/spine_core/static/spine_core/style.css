@@ -11,3 +11,8 @@ tbody th {
 .muted {
     opacity: 0.5;
 }
+
+.depend-arrow {
+    font-size: 64px;
+    color: #666;
+}
