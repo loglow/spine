@@ -1,6 +1,10 @@
 {% extends 'spine_core/base.html' %}
 
-{% block title %}{{ block.super }} | {% block header %}File{% endblock %} | {% block subheader %}{{ file }}{% endblock %}{% endblock %}
+{% block title %}
+    {{ block.super }} | 
+    {% block header %}File{% endblock %} |
+    {% block subheader %}{{ file }}{% endblock %}
+{% endblock %}
 
 {% block content %}
 
@@ -9,20 +13,15 @@
         <tr><th>Attribute</th><th>Value</th></tr>
     </thead>
     <tbody>
+        <tr><th>Path</th><td>{% if file.exists %}<span class="label label-success">Online</span>{% else %}<span class="label label-danger">Offline</span>{% endif %} {{ file.path }}</td></tr>
+        <tr><th>File Type</th><td>{% if not file.exists %}<span class="label label-default muted">Cached</span>{% endif %} {{ file.file_type }}</td></tr>
+        <tr><th>MIME Type</th><td>{% if not file.exists %}<span class="label label-default muted">Cached</span>{% endif %} {{ file.mime_type }}</td></tr>
+        <tr><th>Size</th><td>{% if not file.exists %}<span class="label label-default muted">Cached</span>{% endif %} {{ file.get_pretty_size }}</td></tr>
+        <tr><th>MD5</th><td>{% if not file.exists %}<span class="label label-default muted">Cached</span>{% endif %} {{ file.md5_hash }}</td></tr>
+        <tr><th>Modified</th><td>{% if not file.exists %}<span class="label label-default muted">Cached</span>{% endif %} {{ file.last_edited }}</td></tr>
+        <tr><th>Version</th><td>{% if file.repo.repo_type == 'NONE' %}<span class="label label-default">Not Versioned</span>{% else %}{{ file.last_version }}{% endif %}</td></tr>
         <tr><th>ID</th><td>{{ file.id }}</td></tr>
-        <tr><th>Path</th><td>{{ file.path }}</td></tr>
-        <tr><th>Check</th><td>
-            {% if file_not_found %}
-                <span class="label label-danger">File Missing</span>
-            {% else %}
-                <span class="label label-success">File Exists</span>
-            {% endif %}
-        </td></tr>
-        <tr><th>File Type</th><td>{{ file.file_type }}</td></tr>
-        <tr><th>Mime Type</th><td>{{ file.mime_type }}</td></tr>
         <tr><th>Repo</th><td><a href="{% url 'spine_core:repo' file.repo.id %}">{{ file.repo }}</a></td></tr>
-        <tr><th>Last Version</th><td>{{ file.last_version }}</td></tr>
-        <tr><th>Last Edited</th><td>{{ file.last_edited }}</td></tr>
     </tbody>
 </table>
 

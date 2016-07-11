@@ -19,8 +19,6 @@
 from django.shortcuts import render
 from django.views.generic import DetailView
 
-import magic
-
 from .models import Repo, File, Depend
 
 def index(request):
@@ -44,17 +42,7 @@ class FileView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(FileView, self).get_context_data(**kwargs)
-        file = context['file']
-        path = file.get_full_path()
-        try:
-            magic_type = magic.from_file(path)
-            magic_mime = magic.from_file(path, mime=True)
-        except FileNotFoundError:
-            context['file_not_found'] = True
-        else:
-            file.file_type = magic_type
-            file.mime_type = magic_mime
-            file.save()
+        context['file'].update_stats()
         return context
 
 class DependView(DetailView):

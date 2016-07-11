@@ -1,6 +1,10 @@
 {% extends 'spine_core/base.html' %}
 
-{% block title %}{{ block.super }} | {% block header %}Repo{% endblock %} | {% block subheader %}{{ repo }}{% endblock %}{% endblock %}
+{% block title %}
+    {{ block.super }} |
+    {% block header %}Repo{% endblock %} |
+    {% block subheader %}{{ repo }}{% endblock %}
+{% endblock %}
 
 {% block content %}
 
