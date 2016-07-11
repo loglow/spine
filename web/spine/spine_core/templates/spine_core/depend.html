@@ -11,12 +11,30 @@
 <h3>Master File</h3>
 <table class="table table-bordered">
     <thead>
-        <tr><th>Attribute</th><th>Value</th></tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Value</th>
+        </tr>
     </thead>
     <tbody>
-        <tr><th>File</th><td><a href="{% url 'spine_core:file' depend.master_file.id %}">{{ depend.master_file }}</a></td></tr>
-        <tr><th>Version</th><td>{{ depend.master_version }}</td></tr>
-        <tr><th>Modified</th><td>{{ depend.master_last_edited }}</td></tr>
+        <tr>
+            <th>File</th>
+            <td><a href="{% url 'spine_core:file' depend.master_file.id %}">{{ depend.master_file }}</a></td>
+        </tr>
+        <tr>
+            <th>Version</th>
+            <td>
+                {% if depend.master_file.repo.repo_type == 'NONE' %}
+                <span class="label label-default">Not Versioned</span>
+                {% else %}
+                {{ depend.master_version }}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Modified</th>
+            <td>{{ depend.master_last_edited }}</td>
+        </tr>
     </tbody>
 </table>
 
@@ -27,12 +45,30 @@
 <h3>Depends On</h3>
 <table class="table table-bordered">
     <thead>
-        <tr><th>Attribute</th><th>Value</th></tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Value</th>
+        </tr>
     </thead>
     <tbody>
-        <tr><th>File</th><td><a href="{% url 'spine_core:file' depend.depend_file.id %}">{{ depend.depend_file }}</a></td></tr>
-        <tr><th>Version</th><td>{{ depend.depend_version }}</td></tr>
-        <tr><th>Modified</th><td>{{ depend.depend_last_edited }}</td></tr>
+        <tr>
+            <th>File</th>
+            <td><a href="{% url 'spine_core:file' depend.depend_file.id %}">{{ depend.depend_file }}</a></td>
+        </tr>
+        <tr>
+            <th>Version</th>
+            <td>
+                {% if depend.depend_file.repo.repo_type == 'NONE' %}
+                <span class="label label-default">Not Versioned</span>
+                {% else %}
+                {{ depend.depend_version }}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Modified</th>
+            <td>{{ depend.depend_last_edited }}</td>
+        </tr>
     </tbody>
 </table>
 
