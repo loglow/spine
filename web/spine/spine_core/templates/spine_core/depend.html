@@ -24,7 +24,7 @@
         <tr>
             <th>Version</th>
             <td>
-                {% if depend.master_file.repo.repo_type == 'NONE' %}
+                {% if depend.master_file.repo.type == 'NONE' %}
                 <span class="label label-default">Not Versioned</span>
                 {% else %}
                 {{ depend.master_version }}
@@ -33,7 +33,7 @@
         </tr>
         <tr>
             <th>Modified</th>
-            <td>{{ depend.master_last_edited }}</td>
+            <td>{{ depend.master_modified }}</td>
         </tr>
     </tbody>
 </table>
@@ -58,7 +58,7 @@
         <tr>
             <th>Version</th>
             <td>
-                {% if depend.depend_file.repo.repo_type == 'NONE' %}
+                {% if depend.depend_file.repo.type == 'NONE' %}
                 <span class="label label-default">Not Versioned</span>
                 {% else %}
                 {{ depend.depend_version }}
@@ -67,7 +67,7 @@
         </tr>
         <tr>
             <th>Modified</th>
-            <td>{{ depend.depend_last_edited }}</td>
+            <td>{{ depend.depend_modified }}</td>
         </tr>
     </tbody>
 </table>

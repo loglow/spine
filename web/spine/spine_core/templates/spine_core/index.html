@@ -10,9 +10,9 @@
 <div class="list-group">
     <div class="list-group-item list-group-item-header">
         Projects
-        <span class="badge">{{ project_list|length }}</span>
+        <span class="badge">{{ projects|length }}</span>
     </div>
-    {% for project in project_list %}
+    {% for project in projects %}
     <a class="list-group-item" href="{% url 'spine_core:project' project.id %}">{{ project }}</a>
     {% endfor %}
 </div>
@@ -20,9 +20,9 @@
 <div class="list-group">
     <div class="list-group-item list-group-item-header">
         Repos
-        <span class="badge">{{ repo_list|length }}</span>
+        <span class="badge">{{ repos|length }}</span>
     </div>
-    {% for repo in repo_list %}
+    {% for repo in repos %}
     <a class="list-group-item" href="{% url 'spine_core:repo' repo.id %}">{{ repo }}</a>
     {% endfor %}
 </div>
@@ -30,9 +30,9 @@
 <div class="list-group">
     <div class="list-group-item list-group-item-header">
         Files
-        <span class="badge">{{ file_list|length }}</span>
+        <span class="badge">{{ files|length }}</span>
     </div>
-    {% for file in file_list %}
+    {% for file in files %}
     <a class="list-group-item" href="{% url 'spine_core:file' file.id %}">{{ file }}</a>
     {% endfor %}
 </div>
@@ -40,9 +40,9 @@
 <div class="list-group">
     <div class="list-group-item list-group-item-header">
         Depends
-        <span class="badge">{{ depend_list|length }}</span>
+        <span class="badge">{{ depends|length }}</span>
     </div>
-    {% for depend in depend_list %}
+    {% for depend in depends %}
     <a class="list-group-item" href="{% url 'spine_core:depend' depend.id %}">{{ depend }}</a>
     {% endfor %}
 </div>
@@ -50,10 +50,20 @@
 <div class="list-group">
     <div class="list-group-item list-group-item-header">
         Assets
-        <span class="badge">{{ asset_list|length }}</span>
+        <span class="badge">{{ assets|length }}</span>
     </div>
-    {% for asset in asset_list %}
+    {% for asset in assets %}
     <a class="list-group-item" href="{% url 'spine_core:asset' asset.id %}">{{ asset }}</a>
+    {% endfor %}
+</div>
+
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
+        Tasks
+        <span class="badge">{{ tasks|length }}</span>
+    </div>
+    {% for task in tasks %}
+    <a class="list-group-item" href="{% url 'spine_core:task' task.id %}">{{ task }}</a>
     {% endfor %}
 </div>
 

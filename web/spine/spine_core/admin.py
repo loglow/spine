@@ -18,26 +18,26 @@
 
 from django.contrib import admin
 
-from .models import Project, Repo, File, Depend, Asset
+from .models import Project, Repo, File, Depend, Asset, AssetType, Task, TaskType
 
 class RepoAdmin(admin.ModelAdmin):
 	list_display = (
         'name',
-        'root_path',
-        'repo_type',
+        'path',
+        'type',
         'url',
     )
 
 class FileAdmin(admin.ModelAdmin):
 	list_display = (
         'path',
-        'file_type',
-        'mime_type',
-        'size_in_bytes',
-        'md5_hash',
+        'type',
+        'mime',
+        'size',
+        'hash',
         'repo',
-        'last_version',
-        'last_edited',
+        'version',
+        'modified',
     )
 
 class DependAdmin(admin.ModelAdmin):
@@ -45,14 +45,32 @@ class DependAdmin(admin.ModelAdmin):
         '__str__',
         'master_file',
         'master_version',
-        'master_last_edited',
+        'master_modified',
         'depend_file',
         'depend_version',
-        'depend_last_edited',
+        'depend_modified',
+    )
+
+class TaskAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'type',
+        'status',
+        'duration',
+        'assigned_to',
+    )
+
+class AssetAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'type',
     )
 
 admin.site.register(Project)
-admin.site.register(Asset)
+admin.site.register(Asset, AssetAdmin)
+admin.site.register(AssetType)
+admin.site.register(Task, TaskAdmin)
+admin.site.register(TaskType)
 admin.site.register(Repo, RepoAdmin)
 admin.site.register(File, FileAdmin)
 admin.site.register(Depend, DependAdmin)

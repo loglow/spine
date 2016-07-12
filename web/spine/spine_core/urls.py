@@ -28,4 +28,5 @@ urlpatterns = [
     url(r'^file/(?P<pk>[0-9]+)/$', views.FileView.as_view(), name='file'),
     url(r'^depend/(?P<pk>[0-9]+)/$', views.DependView.as_view(), name='depend'),
     url(r'^asset/(?P<pk>[0-9]+)/$', views.AssetView.as_view(), name='asset'),
+    url(r'^task/(?P<pk>[0-9]+)/$', views.TaskView.as_view(), name='task'),
 ]

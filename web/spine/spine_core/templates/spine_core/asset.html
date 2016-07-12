@@ -20,6 +20,10 @@
             <th>Name</th>
             <td>{{ asset.name }}</td>
         </tr>
+        <tr>
+            <th>Type</th>
+            <td>{{ asset.type }}</td>
+        </tr>
     </tbody>
 </table>
 
@@ -30,6 +34,16 @@
     </div>
     {% for file in asset.files.all %}
     <a class="list-group-item" href="{% url 'spine_core:file' file.id %}">{{ file }}</a>
+    {% endfor %}
+</div>
+
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
+        Tasks
+        <span class="badge">{{ asset.task_set.all.count }}</span>
+    </div>
+    {% for task in asset.task_set.all %}
+    <a class="list-group-item" href="{% url 'spine_core:task' task.id %}">{{ task }}</a>
     {% endfor %}
 </div>
 

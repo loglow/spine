@@ -19,7 +19,7 @@
         <tr>
             <th>Path</th>
             <td>
-                {% if file.exists %}
+                {% if file.online %}
                 <span class="label label-success">Online</span>
                 {% else %}
                 <span class="label label-danger">Offline</span>
@@ -29,11 +29,11 @@
         </tr>
         <tr>
             <th>File Type</th>
-            <td>{{ file.file_type }}</td>
+            <td>{{ file.type }}</td>
         </tr>
         <tr>
             <th>MIME Type</th>
-            <td>{{ file.mime_type }}</td>
+            <td>{{ file.mime }}</td>
         </tr>
         <tr>
             <th>Size</th>
@@ -41,19 +41,19 @@
         </tr>
         <tr>
             <th>MD5</th>
-            <td>{{ file.md5_hash }}</td>
+            <td>{{ file.hash }}</td>
         </tr>
         <tr>
             <th>Modified</th>
-            <td>{{ file.last_edited }}</td>
+            <td>{{ file.modified }}</td>
         </tr>
         <tr>
             <th>Version</th>
             <td>
-                {% if file.repo.repo_type == 'NONE' %}
+                {% if file.repo.type == 'NONE' %}
                 <span class="label label-default">Not Versioned</span>
                 {% else %}
-                {{ file.last_version }}
+                {{ file.version }}
                 {% endif %}
             </td>
         </tr>
