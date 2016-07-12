@@ -1,0 +1,5 @@
+sudo systemctl start rabbitmq-server
+sudo systemctl start postgresql
+python3 manage.py runserver
+celery-3 -A spine worker -l info
+
