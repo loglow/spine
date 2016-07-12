@@ -29,48 +29,23 @@
         </tr>
         <tr>
             <th>File Type</th>
-            <td>
-                {% if not file.exists %}
-                <span class="label label-default muted">Cached</span>
-                {% endif %}
-                {{ file.file_type }}
-            </td>
+            <td>{{ file.file_type }}</td>
         </tr>
         <tr>
             <th>MIME Type</th>
-            <td>
-                {% if not file.exists %}
-                <span class="label label-default muted">Cached</span>
-                {% endif %}
-                {{ file.mime_type }}
-            </td>
+            <td>{{ file.mime_type }}</td>
         </tr>
         <tr>
             <th>Size</th>
-            <td>
-                {% if not file.exists %}
-                <span class="label label-default muted">Cached</span>
-                {% endif %}
-                {{ file.get_pretty_size }}
-            </td>
+            <td>{{ file.get_pretty_size }}</td>
         </tr>
         <tr>
             <th>MD5</th>
-            <td>
-                {% if not file.exists %}
-                <span class="label label-default muted">Cached</span>
-                {% endif %}
-                {{ file.md5_hash }}
-            </td>
+            <td>{{ file.md5_hash }}</td>
         </tr>
         <tr>
             <th>Modified</th>
-            <td>
-                {% if not file.exists %}
-                <span class="label label-default muted">Cached</span>
-                {% endif %}
-                {{ file.last_edited }}
-            </td>
+            <td>{{ file.last_edited }}</td>
         </tr>
         <tr>
             <th>Version</th>
