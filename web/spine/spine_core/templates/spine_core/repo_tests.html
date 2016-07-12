@@ -1,0 +1,26 @@
+{% extends 'spine_core/base.html' %}
+
+{% block title %}{{ repo }}{% endblock %}
+
+{% block header %}{{ repo }}{% endblock %}
+
+{% block content %}
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr><th>Attribute</th><th>Value</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Root Path</td><td>{{ repo.root_path }}</td></tr>
+        <tr><td>Type</td><td>{{ repo.get_repo_type_display }}</td></tr>
+        <tr><td>URL</td><td>{{ repo.url }}</td></tr>
+    </tbody>
+</table>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'spine_core:update' repo.id %}" method="post">
+{% csrf_token %}
+<input type="submit" value="List" />
+</form>
+{% endblock %}

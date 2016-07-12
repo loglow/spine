@@ -21,6 +21,7 @@ from django.http import HttpResponse
 from django.views.generic import DetailView
 from .spider import ProjectTree
 from .models import Repo, File, Depend
+from .tasks import list_current
 
 def index(request):
     repo_list = Repo.objects.all()
@@ -56,4 +57,6 @@ class TestsView(DetailView):
 def update(request, repo_id):
     repo = get_object_or_404(Repo, pk=repo_id)
     spider = ProjectTree(repo.root_path, url=repo.url)
-    return HttpResponse('<br>'.join(spider.all_files()))
+    a = list_current(spider)
+    print(a)
+    return HttpResponse('getting_files {}'.format(a.__repr__()))
