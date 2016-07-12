@@ -32,6 +32,10 @@
             <th>Root Path</th>
             <td>{{ repo.root_path }}</td>
         </tr>
+        <tr>
+            <th>Project</th>
+            <td><a href="{% url 'spine_core:project' repo.project.id %}">{{ repo.project }}</a></td>
+        </tr>
     </tbody>
 </table>
 

@@ -9,6 +9,16 @@
 
 <div class="list-group">
     <div class="list-group-item list-group-item-header">
+        Projects
+        <span class="badge">{{ project_list|length }}</span>
+    </div>
+    {% for project in project_list %}
+    <a class="list-group-item" href="{% url 'spine_core:project' project.id %}">{{ project }}</a>
+    {% endfor %}
+</div>
+
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
         Repos
         <span class="badge">{{ repo_list|length }}</span>
     </div>

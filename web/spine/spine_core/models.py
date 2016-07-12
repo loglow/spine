@@ -31,6 +31,12 @@ def md5sum(filename, blocksize=65536):
             hash.update(block)
     return hash.hexdigest()
 
+class Project(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
 class Repo(models.Model):
     REPO_TYPE_CHOICES = (
         ('NONE', 'None'),
@@ -46,6 +52,7 @@ class Repo(models.Model):
     )
     url = models.CharField(max_length=200)
     name = models.CharField(max_length=200)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
