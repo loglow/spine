@@ -23,7 +23,6 @@ from .models import Project, Repo, File, Depend
 class RepoAdmin(admin.ModelAdmin):
 	list_display = (
         'name',
-        'project',
         'root_path',
         'repo_type',
         'url',

@@ -32,12 +32,18 @@
             <th>Root Path</th>
             <td>{{ repo.root_path }}</td>
         </tr>
-        <tr>
-            <th>Project</th>
-            <td><a href="{% url 'spine_core:project' repo.project.id %}">{{ repo.project }}</a></td>
-        </tr>
     </tbody>
 </table>
+
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
+        Projects
+        <span class="badge">{{ repo.projects.all.count }}</span>
+    </div>
+    {% for project in repo.projects.all %}
+    <a class="list-group-item" href="{% url 'spine_core:project' project.id %}">{{ project }}</a>
+    {% endfor %}
+</div>
 
 <div class="list-group">
     <div class="list-group-item list-group-item-header">

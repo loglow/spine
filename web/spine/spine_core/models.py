@@ -52,7 +52,7 @@ class Repo(models.Model):
     )
     url = models.CharField(max_length=200)
     name = models.CharField(max_length=200)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    projects = models.ManyToManyField(Project)
 
     def __str__(self):
         return self.name
