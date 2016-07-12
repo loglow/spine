@@ -16,10 +16,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import magic
 from django.db import models
-from os.path import join, getsize, isfile, getmtime
+from django.utils import timezone
+from os.path import join, getsize, getmtime
 from hashlib import md5
-from magic import from_file
 from datetime import datetime
 from humanize import naturalsize
 
@@ -64,25 +65,28 @@ class File(models.Model):
         return self.path
 
     def get_full_path(self):
+        """Return fully qualified path to file on local storage."""
         return join(self.repo.root_path, self.path)
 
     def get_pretty_size(self):
+        """Return file size in human-readable natural language."""
         return naturalsize(self.size_in_bytes)
 
     def update_stats(self):
+        """Check if file exists on disk and if so, update its metadata."""
         full_path = self.get_full_path()
-        self.exists = isfile(full_path)
-        self.save()
         try:
-            self.last_edited = datetime.fromtimestamp(getmtime(full_path))
+            self.last_edited = timezone.make_aware(datetime.fromtimestamp(getmtime(full_path)))
             self.size_in_bytes = getsize(full_path)
             self.md5_hash = md5sum(full_path)
-            self.file_type = from_file(full_path)
-            self.mime_type = from_file(full_path, mime=True)
-            self.save()
+            self.file_type = magic.from_file(full_path)
+            self.mime_type = magic.from_file(full_path, mime=True)
         except FileNotFoundError:
-            return False
-        return True
+            self.exists = False
+        else:
+            self.exists = True
+        self.save()
+        return self.exists
 
 class Depend(models.Model):
     master_file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='master_set')
