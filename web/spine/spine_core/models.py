@@ -105,3 +105,10 @@ class Depend(models.Model):
 
     def __str__(self):
         return str(self.master_file)+' \u2192 '+str(self.depend_file)
+
+class Asset(models.Model):
+    name = models.CharField(max_length=200)
+    files = models.ManyToManyField(File)
+
+    def __str__(self):
+        return self.name

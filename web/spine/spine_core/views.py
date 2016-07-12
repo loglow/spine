@@ -19,18 +19,20 @@
 from django.shortcuts import render
 from django.views.generic import DetailView
 
-from .models import Project, Repo, File, Depend
+from .models import Project, Repo, File, Depend, Asset
 
 def index(request):
     project_list = Project.objects.all()
     repo_list = Repo.objects.all()
     file_list = File.objects.all()
     depend_list = Depend.objects.all()
+    asset_list = Asset.objects.all()
     context = {
         'project_list': project_list,
         'repo_list': repo_list,
         'file_list': file_list,
         'depend_list': depend_list,
+        'asset_list': asset_list,
     }
     return render(request, 'spine_core/index.html', context)
 
@@ -54,3 +56,7 @@ class FileView(DetailView):
 class DependView(DetailView):
     model = Depend
     template_name = 'spine_core/depend.html'
+
+class AssetView(DetailView):
+    model = Asset
+    template_name = 'spine_core/asset.html'

@@ -18,7 +18,7 @@
 
 from django.contrib import admin
 
-from .models import Project, Repo, File, Depend
+from .models import Project, Repo, File, Depend, Asset
 
 class RepoAdmin(admin.ModelAdmin):
 	list_display = (
@@ -52,6 +52,7 @@ class DependAdmin(admin.ModelAdmin):
     )
 
 admin.site.register(Project)
+admin.site.register(Asset)
 admin.site.register(Repo, RepoAdmin)
 admin.site.register(File, FileAdmin)
 admin.site.register(Depend, DependAdmin)

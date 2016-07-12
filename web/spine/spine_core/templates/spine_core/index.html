@@ -47,4 +47,14 @@
     {% endfor %}
 </div>
 
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
+        Assets
+        <span class="badge">{{ asset_list|length }}</span>
+    </div>
+    {% for asset in asset_list %}
+    <a class="list-group-item" href="{% url 'spine_core:asset' asset.id %}">{{ asset }}</a>
+    {% endfor %}
+</div>
+
 {% endblock %}
