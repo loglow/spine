@@ -56,7 +56,5 @@ class TestsView(DetailView):
 
 def update(request, repo_id):
     repo = get_object_or_404(Repo, pk=repo_id)
-    spider = ProjectTree(repo.root_path, url=repo.url)
-    a = list_current(spider)
-    print(a)
-    return HttpResponse('getting_files {}'.format(a.__repr__()))
+    a = list_current.delay(repo.id)
+    return HttpResponse('getting_files')
