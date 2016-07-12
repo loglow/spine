@@ -133,4 +133,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
-
+# CELERY_RESULT_BACKEND = 'database'
+BROKER_URL = 'amqp://guest:guest@localhost:5672//'
