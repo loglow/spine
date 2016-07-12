@@ -1,21 +1,97 @@
 {% extends 'spine_core/base.html' %}
 
-{% block title %}{{ file }}{% endblock %}
-
-{% block header %}{{ file }}{% endblock %}
+{% block title %}
+    {{ block.super }} | 
+    {% block header %}File{% endblock %} |
+    {% block subheader %}{{ file }}{% endblock %}
+{% endblock %}
 
 {% block content %}
 
-<table class="table table-striped table-bordered">
+<table class="table table-bordered">
     <thead>
-        <tr><th>Attribute</th><th>Value</th></tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Value</th>
+        </tr>
     </thead>
     <tbody>
-        <tr><td>Path</td><td>{{ file.path }}</td></tr>
-        <tr><td>Repo</td><td>{{ file.repo }}</td></tr>
-        <tr><td>Last Version</td><td>{{ file.last_version }}</td></tr>
-        <tr><td>Last Edited</td><td>{{ file.last_edited }}</td></tr>
+        <tr>
+            <th>Path</th>
+            <td>
+                {% if file.exists %}
+                <span class="label label-success">Online</span>
+                {% else %}
+                <span class="label label-danger">Offline</span>
+                {% endif %}
+                {{ file.path }}
+            </td>
+        </tr>
+        <tr>
+            <th>File Type</th>
+            <td>{{ file.file_type }}</td>
+        </tr>
+        <tr>
+            <th>MIME Type</th>
+            <td>{{ file.mime_type }}</td>
+        </tr>
+        <tr>
+            <th>Size</th>
+            <td>{{ file.get_pretty_size }}</td>
+        </tr>
+        <tr>
+            <th>MD5</th>
+            <td>{{ file.md5_hash }}</td>
+        </tr>
+        <tr>
+            <th>Modified</th>
+            <td>{{ file.last_edited }}</td>
+        </tr>
+        <tr>
+            <th>Version</th>
+            <td>
+                {% if file.repo.repo_type == 'NONE' %}
+                <span class="label label-default">Not Versioned</span>
+                {% else %}
+                {{ file.last_version }}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Repo</th>
+            <td><a href="{% url 'spine_core:repo' file.repo.id %}">{{ file.repo }}</a></td>
+        </tr>
     </tbody>
 </table>
+
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
+        Depends On
+        <span class="badge">{{ file.master_set.all|length }}</span>
+    </div>
+    {% for depend in file.master_set.all %}
+    <a class="list-group-item" href="{% url 'spine_core:depend' depend.id %}">{{ depend }}</a>
+    {% endfor %}
+</div>
+
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
+        Depended On
+        <span class="badge">{{ file.depend_set.all|length }}</span>
+    </div>
+    {% for depend in file.depend_set.all %}
+    <a class="list-group-item" href="{% url 'spine_core:depend' depend.id %}">{{ depend }}</a>
+    {% endfor %}
+</div>
+
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
+        In Assets
+        <span class="badge">{{ file.asset_set.all|length }}</span>
+    </div>
+    {% for asset in file.asset_set.all %}
+    <a class="list-group-item" href="{% url 'spine_core:asset' asset.id %}">{{ asset }}</a>
+    {% endfor %}
+</div>
 
 {% endblock %}

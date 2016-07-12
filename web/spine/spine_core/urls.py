@@ -23,9 +23,10 @@ from . import views
 app_name = 'spine_core'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^tests/(?P<pk>[0-9]+)/$', views.TestsView.as_view(), name='repo_test'),
+    url(r'^project/(?P<pk>[0-9]+)/$', views.ProjectView.as_view(), name='project'),
     url(r'^repo/(?P<pk>[0-9]+)/$', views.RepoView.as_view(), name='repo'),
     url(r'^file/(?P<pk>[0-9]+)/$', views.FileView.as_view(), name='file'),
     url(r'^depend/(?P<pk>[0-9]+)/$', views.DependView.as_view(), name='depend'),
+    url(r'^asset/(?P<pk>[0-9]+)/$', views.AssetView.as_view(), name='asset'),
     url(r'^(?P<repo_id>[0-9]+)/update/$', views.update, name='update'),
 ]

@@ -1,22 +1,27 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <title>{% block title %}Spine{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'spine_core/bootstrap-3.3.6/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'spine_core/font-awesome-4.6.3/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'spine_core/style.css' %}">
 </head>
 <body>
 <div class="container">
-<div class="page-header">
-    <h1>{% block header %}{% endblock %}</h1>
+    <div class="page-header">
+        <h1>
+            <a href="{% url 'spine_core:index' %}">Spine</a>
+            {% block header %}{% endblock %}
+            <small>{% block subheader %}{% endblock %}</small>
+        </h1>
+    </div>
+    {% block content %}{% endblock %}
 </div>
-{% block content %}{% endblock %}
-</div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="{% static 'spine_core/jquery-2.2.4/jquery.min.js' %}"></script>
+<script src="{% static 'spine_core/bootstrap-3.3.6/bootstrap.min.js' %}"></script>
 </body>
 </html>

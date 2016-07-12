@@ -1,0 +1,18 @@
+.list-group-item-header, thead {
+    background-color: #ddd;
+    font-weight: bold;
+}
+
+tbody th {
+    background-color: #f6f6f6;
+    font-weight: normal;
+}
+
+.muted {
+    opacity: 0.5;
+}
+
+.depend-arrow {
+    font-size: 64px;
+    color: #666;
+}

@@ -1,13 +1,24 @@
 {% extends 'spine_core/base.html' %}
 
-{% block title %}Spine{% endblock %}
-
-{% block header %}Spine{% endblock %}
+{% block title %}
+    {{ block.super }} |
+    {% block subheader %}Index{% endblock %}
+{% endblock %}
 
 {% block content %}
 
 <div class="list-group">
-    <div class="list-group-item active">
+    <div class="list-group-item list-group-item-header">
+        Projects
+        <span class="badge">{{ project_list|length }}</span>
+    </div>
+    {% for project in project_list %}
+    <a class="list-group-item" href="{% url 'spine_core:project' project.id %}">{{ project }}</a>
+    {% endfor %}
+</div>
+
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
         Repos
         <span class="badge">{{ repo_list|length }}</span>
     </div>
@@ -17,7 +28,7 @@
 </div>
 
 <div class="list-group">
-    <div class="list-group-item active">
+    <div class="list-group-item list-group-item-header">
         Files
         <span class="badge">{{ file_list|length }}</span>
     </div>
@@ -27,12 +38,22 @@
 </div>
 
 <div class="list-group">
-    <div class="list-group-item active">
+    <div class="list-group-item list-group-item-header">
         Depends
         <span class="badge">{{ depend_list|length }}</span>
     </div>
     {% for depend in depend_list %}
     <a class="list-group-item" href="{% url 'spine_core:depend' depend.id %}">{{ depend }}</a>
+    {% endfor %}
+</div>
+
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
+        Assets
+        <span class="badge">{{ asset_list|length }}</span>
+    </div>
+    {% for asset in asset_list %}
+    <a class="list-group-item" href="{% url 'spine_core:asset' asset.id %}">{{ asset }}</a>
     {% endfor %}
 </div>
 

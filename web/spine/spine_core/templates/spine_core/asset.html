@@ -1,0 +1,36 @@
+{% extends 'spine_core/base.html' %}
+
+{% block title %}
+    {{ block.super }} |
+    {% block header %}Asset{% endblock %} |
+    {% block subheader %}{{ asset }}{% endblock %}
+{% endblock %}
+
+{% block content %}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Attribute</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Name</th>
+            <td>{{ asset.name }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
+        Files
+        <span class="badge">{{ asset.files.all.count }}</span>
+    </div>
+    {% for file in asset.files.all %}
+    <a class="list-group-item" href="{% url 'spine_core:file' file.id %}">{{ file }}</a>
+    {% endfor %}
+</div>
+
+{% endblock %}

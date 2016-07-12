@@ -1,0 +1,36 @@
+{% extends 'spine_core/base.html' %}
+
+{% block title %}
+    {{ block.super }} |
+    {% block header %}Project{% endblock %} |
+    {% block subheader %}{{ project }}{% endblock %}
+{% endblock %}
+
+{% block content %}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Attribute</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Name</th>
+            <td>{{ project.name }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
+        Repos
+        <span class="badge">{{ project.repos.all.count }}</span>
+    </div>
+    {% for repo in project.repos.all %}
+    <a class="list-group-item" href="{% url 'spine_core:repo' repo.id %}">{{ repo }}</a>
+    {% endfor %}
+</div>
+
+{% endblock %}
