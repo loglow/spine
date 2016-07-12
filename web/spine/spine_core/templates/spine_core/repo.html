@@ -38,9 +38,9 @@
 <div class="list-group">
     <div class="list-group-item list-group-item-header">
         Projects
-        <span class="badge">{{ repo.projects.all.count }}</span>
+        <span class="badge">{{ repo.project_set.all.count }}</span>
     </div>
-    {% for project in repo.projects.all %}
+    {% for project in repo.project_set.all %}
     <a class="list-group-item" href="{% url 'spine_core:project' project.id %}">{{ project }}</a>
     {% endfor %}
 </div>

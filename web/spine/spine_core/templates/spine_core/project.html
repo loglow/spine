@@ -26,9 +26,9 @@
 <div class="list-group">
     <div class="list-group-item list-group-item-header">
         Repos
-        <span class="badge">{{ project.repo_set.all.count }}</span>
+        <span class="badge">{{ project.repos.all.count }}</span>
     </div>
-    {% for repo in project.repo_set.all %}
+    {% for repo in project.repos.all %}
     <a class="list-group-item" href="{% url 'spine_core:repo' repo.id %}">{{ repo }}</a>
     {% endfor %}
 </div>
