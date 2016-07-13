@@ -18,9 +18,12 @@
 
 from django.shortcuts import render
 from django.views.generic import DetailView
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .models import Project, Repo, File, Depend, Asset, Task
+from .models import *
 
+@login_required
 def index(request):
     projects = Project.objects.all()
     repos = Repo.objects.all()
@@ -38,15 +41,15 @@ def index(request):
     }
     return render(request, 'spine_core/index.html', context)
 
-class ProjectView(DetailView):
+class ProjectView(LoginRequiredMixin, DetailView):
     model = Project
     template_name = 'spine_core/project.html'
 
-class RepoView(DetailView):
+class RepoView(LoginRequiredMixin, DetailView):
     model = Repo
     template_name = 'spine_core/repo.html'
 
-class FileView(DetailView):
+class FileView(LoginRequiredMixin, DetailView):
     model = File
     template_name = 'spine_core/file.html'
 
@@ -55,14 +58,14 @@ class FileView(DetailView):
         context['file'].update_stats()
         return context
 
-class DependView(DetailView):
+class DependView(LoginRequiredMixin, DetailView):
     model = Depend
     template_name = 'spine_core/depend.html'
 
-class AssetView(DetailView):
+class AssetView(LoginRequiredMixin, DetailView):
     model = Asset
     template_name = 'spine_core/asset.html'
 
-class TaskView(DetailView):
+class TaskView(LoginRequiredMixin, DetailView):
     model = Task
     template_name = 'spine_core/task.html'
