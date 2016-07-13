@@ -16,11 +16,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from django.contrib import admin
+from django.contrib.admin import ModelAdmin, site
 
-from .models import Project, Repo, File, Depend, Asset, AssetType, Task, TaskType
+from .models import *
 
-class RepoAdmin(admin.ModelAdmin):
+class RepoAdmin(ModelAdmin):
 	list_display = (
         'name',
         'path',
@@ -28,7 +28,7 @@ class RepoAdmin(admin.ModelAdmin):
         'url',
     )
 
-class FileAdmin(admin.ModelAdmin):
+class FileAdmin(ModelAdmin):
 	list_display = (
         'path',
         'type',
@@ -40,7 +40,7 @@ class FileAdmin(admin.ModelAdmin):
         'modified',
     )
 
-class DependAdmin(admin.ModelAdmin):
+class DependAdmin(ModelAdmin):
 	list_display = (
         '__str__',
         'master_file',
@@ -51,7 +51,7 @@ class DependAdmin(admin.ModelAdmin):
         'depend_modified',
     )
 
-class TaskAdmin(admin.ModelAdmin):
+class TaskAdmin(ModelAdmin):
     list_display = (
         'name',
         'type',
@@ -60,17 +60,17 @@ class TaskAdmin(admin.ModelAdmin):
         'assigned_to',
     )
 
-class AssetAdmin(admin.ModelAdmin):
+class AssetAdmin(ModelAdmin):
     list_display = (
         'name',
         'type',
     )
 
-admin.site.register(Project)
-admin.site.register(Asset, AssetAdmin)
-admin.site.register(AssetType)
-admin.site.register(Task, TaskAdmin)
-admin.site.register(TaskType)
-admin.site.register(Repo, RepoAdmin)
-admin.site.register(File, FileAdmin)
-admin.site.register(Depend, DependAdmin)
+site.register(Project)
+site.register(Asset, AssetAdmin)
+site.register(AssetType)
+site.register(Task, TaskAdmin)
+site.register(TaskType)
+site.register(Repo, RepoAdmin)
+site.register(File, FileAdmin)
+site.register(Depend, DependAdmin)
