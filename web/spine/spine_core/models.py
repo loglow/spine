@@ -16,17 +16,17 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import magic
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-from os.path import join, getsize, getmtime
-from hashlib import md5
 from datetime import datetime
-from humanize import naturalsize
+from os import path
+import hashlib
+import humanize
+import magic
 
 def md5sum(filename, blocksize=65536):
-    hash = md5()
+    hash = hashlib.md5()
     with open(filename, "rb") as f:
         for block in iter(lambda: f.read(blocksize), b""):
             hash.update(block)
@@ -75,18 +75,18 @@ class File(models.Model):
 
     def get_full_path(self):
         """Return fully qualified path to file on local storage."""
-        return join(self.repo.path, self.path)
+        return path.join(self.repo.path, self.path)
 
     def get_pretty_size(self):
         """Return file size in human-readable natural language."""
-        return naturalsize(self.size)
+        return humanize.naturalsize(self.size)
 
     def update_stats(self):
         """Check if file exists on disk and if so, update its metadata."""
         full_path = self.get_full_path()
         try:
-            self.modified = timezone.make_aware(datetime.fromtimestamp(getmtime(full_path)))
-            self.size = getsize(full_path)
+            self.modified = timezone.make_aware(datetime.fromtimestamp(path.getmtime(full_path)))
+            self.size = path.getsize(full_path)
             self.hash = md5sum(full_path)
             self.type = magic.from_file(full_path)
             self.mime = magic.from_file(full_path, mime=True)
