@@ -54,6 +54,7 @@ class Repo(models.Model):
 class Project(models.Model):
     name = models.CharField(max_length=200)
     repos = models.ManyToManyField(Repo)
+    users = models.ManyToManyField(User)
 
     def __str__(self):
         return self.name

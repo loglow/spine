@@ -33,4 +33,14 @@
     {% endfor %}
 </div>
 
+<div class="list-group">
+    <div class="list-group-item list-group-item-header">
+        Users
+        <span class="badge">{{ project.users.all.count }}</span>
+    </div>
+    {% for user in project.users.all %}
+    <div class="list-group-item" >{{ user }}</div>
+    {% endfor %}
+</div>
+
 {% endblock %}
