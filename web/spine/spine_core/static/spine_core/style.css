@@ -16,3 +16,8 @@ tbody th {
     font-size: 64px;
     color: #666;
 }
+
+.navbar-toggle {
+    padding: 5px 10px;
+    margin-top: 9px;
+}
