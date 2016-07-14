@@ -44,6 +44,9 @@ class RepoListView(LoginRequiredMixin, ListView):
     model = Repo
     template_name = 'spine_core/list.html'
 
+    def get_queryset(self):
+        return Repo.objects.filter(project__users=self.request.user)
+
     def get_context_data(self, **kwargs):
         context = super(RepoListView, self).get_context_data(**kwargs)
         context['header'] = 'Repo'
@@ -53,6 +56,9 @@ class RepoListView(LoginRequiredMixin, ListView):
 class FileListView(LoginRequiredMixin, ListView):
     model = File
     template_name = 'spine_core/list.html'
+
+    def get_queryset(self):
+        return File.objects.filter(repo__project__users=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super(FileListView, self).get_context_data(**kwargs)
@@ -64,6 +70,9 @@ class DependListView(LoginRequiredMixin, ListView):
     model = Depend
     template_name = 'spine_core/list.html'
 
+    def get_queryset(self):
+        return Depend.objects.filter(master_file__repo__project__users=self.request.user)
+
     def get_context_data(self, **kwargs):
         context = super(DependListView, self).get_context_data(**kwargs)
         context['header'] = 'Depend'
@@ -74,6 +83,9 @@ class AssetListView(LoginRequiredMixin, ListView):
     model = Asset
     template_name = 'spine_core/list.html'
 
+    def get_queryset(self):
+        return Asset.objects.filter(files__repo__project__users=self.request.user)
+
     def get_context_data(self, **kwargs):
         context = super(AssetListView, self).get_context_data(**kwargs)
         context['header'] = 'Asset'
@@ -83,6 +95,9 @@ class AssetListView(LoginRequiredMixin, ListView):
 class TaskListView(LoginRequiredMixin, ListView):
     model = Task
     template_name = 'spine_core/list.html'
+
+    def get_queryset(self):
+        return Task.objects.filter(assets__files__repo__project__users=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)
