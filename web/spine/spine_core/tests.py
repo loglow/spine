@@ -54,7 +54,7 @@ class AuthTests(TestCase):
         """Requesting the login page while already logged in should redirect us to the projects page.
         Since we are using the built-in login view, we handle the redirect in the login.html template,
         which means we won't see a 302 redirect in this case, and both templates will appear to be used."""
-        self.test_login_with_correct_password()
+        self.client.login(username='test_user', password='test_password')
         response = self.client.get(reverse('spine_core:login'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('spine_core/login.html')
@@ -70,7 +70,7 @@ class AuthTests(TestCase):
 
     def test_logout_while_logged_in(self):
         """Logging out after being logged in should also redirect to the login page."""
-        self.test_login_with_correct_password()
+        self.client.login(username='test_user', password='test_password')
         response = self.client.get(reverse('spine_core:logout'), follow=True)
         self.assertRedirects(response, '/login/')
         self.assertTemplateUsed('spine_core/login.html')
@@ -85,12 +85,19 @@ class AuthTests(TestCase):
 
     def test_index_while_logged_in(self):
         """The index should redirect to the projects page when a user is logged in."""
-        self.test_login_with_correct_password()
+        self.client.login(username='test_user', password='test_password')
         response = self.client.get(reverse('spine_core:index'), follow=True)
         self.assertRedirects(response, '/project/')
         self.assertTemplateUsed('spine_core/list.html')
         self.assertEqual(response.context['user'].is_authenticated(), True)
         self.assertEqual(response.context['header'], 'Projects')
+
+    def test_other_restricted_page_while_not_logged_in(self):
+        """Other restricted pages should redirect to the login page with the 'next' variable set."""
+        response = self.client.get(reverse('spine_core:project'), follow=True)
+        self.assertRedirects(response, '/login/?next=/project/')
+        self.assertTemplateUsed('spine_core/login.html')
+        self.assertEqual(response.context['user'].is_authenticated(), False)
         
 class ProjectTests(TestCase):
 
