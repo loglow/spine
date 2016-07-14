@@ -17,16 +17,32 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from django.conf.urls import url
+from django.contrib import auth
 
-from . import views
+from spine_core.forms import *
+from spine_core.views import *
 
 app_name = 'spine_core'
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
-    url(r'^project/(?P<pk>[0-9]+)/$', views.ProjectView.as_view(), name='project'),
-    url(r'^repo/(?P<pk>[0-9]+)/$', views.RepoView.as_view(), name='repo'),
-    url(r'^file/(?P<pk>[0-9]+)/$', views.FileView.as_view(), name='file'),
-    url(r'^depend/(?P<pk>[0-9]+)/$', views.DependView.as_view(), name='depend'),
-    url(r'^asset/(?P<pk>[0-9]+)/$', views.AssetView.as_view(), name='asset'),
-    url(r'^task/(?P<pk>[0-9]+)/$', views.TaskView.as_view(), name='task'),
+    url(r'^$', index, name='index'),
+    # User auth views
+    url(r'^login/$', auth.views.login, {
+        'authentication_form': BootstrapAuthForm,
+        'template_name': 'spine_core/login.html',
+    }, name="login"),
+    url(r'^logout/$', auth.views.logout_then_login, name="logout"),
+    # Model-based list views
+    url(r'^project/$', ProjectListView.as_view(), name='project'),
+    url(r'^repo/$', RepoListView.as_view(), name='repo'),
+    url(r'^file/$', FileListView.as_view(), name='file'),
+    url(r'^depend/$', DependListView.as_view(), name='depend'),
+    url(r'^asset/$', AssetListView.as_view(), name='asset'),
+    url(r'^task/$', TaskListView.as_view(), name='task'),
+    # Model-based detail views
+    url(r'^project/(?P<pk>[0-9]+)/$', ProjectDetailView.as_view(), name='project'),
+    url(r'^repo/(?P<pk>[0-9]+)/$', RepoDetailView.as_view(), name='repo'),
+    url(r'^file/(?P<pk>[0-9]+)/$', FileDetailView.as_view(), name='file'),
+    url(r'^depend/(?P<pk>[0-9]+)/$', DependDetailView.as_view(), name='depend'),
+    url(r'^asset/(?P<pk>[0-9]+)/$', AssetDetailView.as_view(), name='asset'),
+    url(r'^task/(?P<pk>[0-9]+)/$', TaskDetailView.as_view(), name='task'),
 ]

@@ -17,39 +17,88 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from django.shortcuts import render
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
 
-from .models import *
+from spine_core.models import *
 
-@login_required
+@login_required(redirect_field_name=None)
 def index(request):
-    projects = Project.objects.all()
-    repos = Repo.objects.all()
-    files = File.objects.all()
-    depends = Depend.objects.all()
-    assets = Asset.objects.all()
-    tasks = Task.objects.all()
-    context = {
-        'projects': projects,
-        'repos': repos,
-        'files': files,
-        'depends': depends,
-        'assets': assets,
-        'tasks': tasks,
-    }
-    return render(request, 'spine_core/index.html', context)
+    return redirect('spine_core:project')
 
-class ProjectView(LoginRequiredMixin, DetailView):
+class ProjectListView(LoginRequiredMixin, ListView):
+    template_name = 'spine_core/list.html'
+
+    def get_queryset(self):
+        return Project.objects.filter(users=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectListView, self).get_context_data(**kwargs)
+        context['header'] = 'Projects'
+        context['object_url'] = 'spine_core:project'
+        return context
+
+class RepoListView(LoginRequiredMixin, ListView):
+    model = Repo
+    template_name = 'spine_core/list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RepoListView, self).get_context_data(**kwargs)
+        context['header'] = 'Repo'
+        context['object_url'] = 'spine_core:repo'
+        return context
+
+class FileListView(LoginRequiredMixin, ListView):
+    model = File
+    template_name = 'spine_core/list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(FileListView, self).get_context_data(**kwargs)
+        context['header'] = 'File'
+        context['object_url'] = 'spine_core:file'
+        return context
+
+class DependListView(LoginRequiredMixin, ListView):
+    model = Depend
+    template_name = 'spine_core/list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(DependListView, self).get_context_data(**kwargs)
+        context['header'] = 'Depend'
+        context['object_url'] = 'spine_core:depend'
+        return context
+
+class AssetListView(LoginRequiredMixin, ListView):
+    model = Asset
+    template_name = 'spine_core/list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AssetListView, self).get_context_data(**kwargs)
+        context['header'] = 'Asset'
+        context['object_url'] = 'spine_core:asset'
+        return context
+
+class TaskListView(LoginRequiredMixin, ListView):
+    model = Task
+    template_name = 'spine_core/list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TaskListView, self).get_context_data(**kwargs)
+        context['header'] = 'Task'
+        context['object_url'] = 'spine_core:task'
+        return context
+
+class ProjectDetailView(LoginRequiredMixin, DetailView):
     model = Project
     template_name = 'spine_core/project.html'
 
-class RepoView(LoginRequiredMixin, DetailView):
+class RepoDetailView(LoginRequiredMixin, DetailView):
     model = Repo
     template_name = 'spine_core/repo.html'
 
-class FileView(LoginRequiredMixin, DetailView):
+class FileDetailView(LoginRequiredMixin, DetailView):
     model = File
     template_name = 'spine_core/file.html'
 
@@ -58,14 +107,14 @@ class FileView(LoginRequiredMixin, DetailView):
         context['file'].update_stats()
         return context
 
-class DependView(LoginRequiredMixin, DetailView):
+class DependDetailView(LoginRequiredMixin, DetailView):
     model = Depend
     template_name = 'spine_core/depend.html'
 
-class AssetView(LoginRequiredMixin, DetailView):
+class AssetDetailView(LoginRequiredMixin, DetailView):
     model = Asset
     template_name = 'spine_core/asset.html'
 
-class TaskView(LoginRequiredMixin, DetailView):
+class TaskDetailView(LoginRequiredMixin, DetailView):
     model = Task
     template_name = 'spine_core/task.html'

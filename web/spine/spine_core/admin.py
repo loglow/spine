@@ -16,61 +16,15 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from django.contrib.admin import ModelAdmin, site
+from django.contrib.admin import site
 
-from .models import *
-
-class RepoAdmin(ModelAdmin):
-	list_display = (
-        'name',
-        'path',
-        'type',
-        'url',
-    )
-
-class FileAdmin(ModelAdmin):
-	list_display = (
-        'path',
-        'type',
-        'mime',
-        'size',
-        'hash',
-        'repo',
-        'version',
-        'modified',
-    )
-
-class DependAdmin(ModelAdmin):
-	list_display = (
-        '__str__',
-        'master_file',
-        'master_version',
-        'master_modified',
-        'depend_file',
-        'depend_version',
-        'depend_modified',
-    )
-
-class TaskAdmin(ModelAdmin):
-    list_display = (
-        'name',
-        'type',
-        'status',
-        'duration',
-        'assigned_to',
-    )
-
-class AssetAdmin(ModelAdmin):
-    list_display = (
-        'name',
-        'type',
-    )
+from spine_core.models import *
 
 site.register(Project)
-site.register(Asset, AssetAdmin)
+site.register(Repo)
+site.register(File)
+site.register(Depend)
+site.register(Asset)
 site.register(AssetType)
-site.register(Task, TaskAdmin)
+site.register(Task)
 site.register(TaskType)
-site.register(Repo, RepoAdmin)
-site.register(File, FileAdmin)
-site.register(Depend, DependAdmin)

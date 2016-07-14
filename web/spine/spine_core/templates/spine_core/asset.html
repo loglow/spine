@@ -1,9 +1,7 @@
 {% extends 'spine_core/base.html' %}
 
-{% block title %}
-    {{ block.super }} |
-    {% block header %}Asset{% endblock %} |
-    {% block subheader %}{{ asset }}{% endblock %}
+{% block header %}
+Asset <small>{{ asset }}</small>
 {% endblock %}
 
 {% block content %}

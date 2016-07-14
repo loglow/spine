@@ -5,21 +5,63 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}Spine{% endblock %}</title>
+        <title>Spine</title>
         <link rel="stylesheet" href="{% static 'spine_core/bootstrap-3.3.6/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'spine_core/bootstrap-3.3.6/bootstrap-theme.min.css' %}">
         <link rel="stylesheet" href="{% static 'spine_core/font-awesome-4.6.3/css/font-awesome.min.css' %}">
         <link rel="stylesheet" href="{% static 'spine_core/style.css' %}">
     </head>
     <body>
+        <nav class="navbar navbar-default navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="{% url 'spine_core:index' %}">Spine</a>
+                    {% if user.is_authenticated %}
+                    <button class="navbar-toggle collapsed text-muted" data-toggle="collapse" data-target="#nc">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    {% endif %}
+                </div>
+                {% if user.is_authenticated %}
+                <div class="collapse navbar-collapse" id="nc">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Browse <i class="fa fa-caret-down"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'spine_core:project' %}">Projects</a></li>
+                                <li><a href="{% url 'spine_core:repo' %}">Repos</a></li>
+                                <li><a href="{% url 'spine_core:file' %}">Files</a></li>
+                                <li><a href="{% url 'spine_core:depend' %}">Depends</a></li>
+                                <li><a href="{% url 'spine_core:asset' %}">Assets</a></li>
+                                <li><a href="{% url 'spine_core:task' %}">Tasks</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-user"></i> {{ user }} <i class="fa fa-caret-down"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'spine_core:logout' %}">Sign out</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </nav>
         <div class="container">
+            {% if user.is_authenticated %}
             <div class="page-header">
                 <h1>
-                    <a href="{% url 'spine_core:index' %}">Spine</a>
-                    {% block header %}{% endblock %}
-                    <small>{% block subheader %}{% endblock %}</small>
+                    {% block header %}
+                    {% endblock %}
                 </h1>
             </div>
-            {% block content %}{% endblock %}
+            {% endif %}
+            {% block content %}
+            {% endblock %}
         </div>
         <script src="{% static 'spine_core/jquery-2.2.4/jquery.min.js' %}"></script>
         <script src="{% static 'spine_core/bootstrap-3.3.6/bootstrap.min.js' %}"></script>
