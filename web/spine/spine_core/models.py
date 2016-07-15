@@ -33,20 +33,20 @@ def md5sum(filename, blocksize=65536):
     return hash.hexdigest()
 
 class Repo(models.Model):
+    name = models.CharField(max_length=200)
+    url = models.CharField(max_length=200)
+    path = models.CharField(max_length=200)
     REPO_TYPE_CHOICES = (
         ('NONE', 'None'),
         ('SVN', 'Subversion'),
         ('MERC', 'Mercurial'),
         ('GIT', 'Git'),
     )
-    path = models.CharField(max_length=200)
     type = models.CharField(
         max_length=8,
         choices=REPO_TYPE_CHOICES,
         default='NONE',
     )
-    url = models.CharField(max_length=200)
-    name = models.CharField(max_length=200)
 
     def __str__(self):
         return self.name
@@ -63,11 +63,11 @@ class File(models.Model):
     path = models.CharField(max_length=200)
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
     version = models.CharField(max_length=20)
-    modified = models.DateTimeField()
+    modified = models.DateTimeField(null=True)
     type = models.CharField(max_length=200)
     mime = models.CharField(max_length=50)
     size = models.PositiveIntegerField(null=True)
-    hash = models.CharField(max_length=32, null=True)
+    hash = models.CharField(max_length=32)
     online = models.NullBooleanField()
 
     def __str__(self):
@@ -100,10 +100,10 @@ class File(models.Model):
 class Depend(models.Model):
     master_file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='master_set')
     depend_file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='depend_set')
-    master_version = models.PositiveIntegerField()
-    depend_version = models.PositiveIntegerField()
-    master_modified = models.DateTimeField()
-    depend_modified = models.DateTimeField()
+    master_version = models.CharField(max_length=20)
+    depend_version = models.CharField(max_length=20)
+    master_modified = models.DateTimeField(null=True)
+    depend_modified = models.DateTimeField(null=True)
 
     def __str__(self):
         return str(self.master_file)+' \u2192 '+str(self.depend_file)
@@ -129,22 +129,22 @@ class TaskType(models.Model):
         return self.name
 
 class Task(models.Model):
+    name = models.CharField(max_length=200)
+    desc = models.TextField()
+    assets = models.ManyToManyField(Asset)
+    type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
+    duration = models.DurationField(null=True)
+    assigned_to = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, blank=True)
     TASK_STATUS_CHOICES = (
         ('NOT_STARTED', 'Not Started'),
         ('IN_PROGRESS', 'In Progress'),
         ('COMPLETE', 'Complete'),
     )
-    name = models.CharField(max_length=200)
-    desc = models.TextField()
-    assets = models.ManyToManyField(Asset)
-    type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
     status = models.CharField(
         max_length=16,
         choices=TASK_STATUS_CHOICES,
         default='NOT_STARTED',
     )
-    duration = models.DurationField()
-    assigned_to = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, blank=True)
 
     def __str__(self):
         return self.name
