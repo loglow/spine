@@ -25,7 +25,7 @@ import subprocess
 from collections import defaultdict
 from bpy.utils import blend_paths
 
-from topsort import Network
+from .topsort import Network
 
 LIBRARY_FILE = "library.json"
 DEPENDS_FILE = "dependencies.json"
@@ -164,6 +164,7 @@ class ProjectCrawler(Network):
         self._add_deps(relative, (
             self._relpath(path) for path in paths
             if self.root in path and os.path.isfile(path)))
+        return relative, paths
 
     def check_files(self, filelist):
         """
@@ -180,5 +181,5 @@ class ProjectCrawler(Network):
         for check_dir in os.walk(self.root):
             if all(folder not in check_dir[0] for folder in self.ignores):
                 for filename in check_dir[2]:
-                    self.check_file(
+                    yield self.check_file(
                         os.path.join(check_dir[0], filename))
