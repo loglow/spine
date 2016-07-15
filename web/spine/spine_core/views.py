@@ -21,7 +21,7 @@ from django.http import HttpResponse
 from django.views.generic import DetailView
 from .spider import ProjectTree
 from .models import Project, Repo, File, Depend, Asset
-from .tasks import list_current
+from .tasks import list_current, dep_current
 
 def index(request):
     project_list = Project.objects.all()
@@ -73,6 +73,10 @@ class AssetView(DetailView):
 
 
 def update(request, repo_id):
-    repo = get_object_or_404(Repo, pk=repo_id)
-    a = list_current.delay(repo.id)
-    return HttpResponse('getting_files')
+    a = list_current.delay(repo_id)
+    return HttpResponse('getting files')
+
+
+def depmake(request, repo_id):
+    a = dep_current.delay(repo_id)
+    return HttpResponse('getting dependencies')
