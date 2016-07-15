@@ -99,20 +99,80 @@ class AuthTests(TestCase):
         self.assertTemplateUsed('spine_core/login.html')
         self.assertEqual(response.context['user'].is_authenticated(), False)
         
-class ProjectTests(TestCase):
+class UserTests(TestCase):
 
     def setUp(self):
-        """Create a user and two projects, assign the user to only one of the projects, then login."""
-        test_user = User.objects.create_user('test_user', 'test_user@example.com', 'test_password')
-        test_project_without_user = Project.objects.create(name="test_project_without_user")
-        test_project_with_user = Project.objects.create(name="test_project_with_user")
-        test_project_with_user.users.add(test_user)
-        self.client.login(username='test_user', password='test_password')
+        """Create test model instances and relationships of all necessary types."""
+        user_1 = User.objects.create_user('user_1', 'user_1@example.com', 'user_1_password')
+        user_2 = User.objects.create_user('user_2', 'user_2@example.com', 'user_2_password')
+        project_1 = Project.objects.create(name="project_1")
+        project_2 = Project.objects.create(name="project_2")
+        project_1.users.add(user_1)
+        repo_1 = Repo.objects.create(name='repo_1', path='/repo_1/')
+        repo_2 = Repo.objects.create(name='repo_2', path='/repo_2/')
+        project_1.repos.add(repo_1)
+        file_1 = File.objects.create(path='file_1', repo=repo_1)
+        file_2 = File.objects.create(path='file_2', repo=repo_1)
+        file_3 = File.objects.create(path='file_3', repo=repo_2)
+        file_4 = File.objects.create(path='file_4', repo=repo_2)
+        depend_1 = Depend.objects.create(master_file=file_1, depend_file=file_2)
+        depend_2 = Depend.objects.create(master_file=file_3, depend_file=file_4)
+        asset_type_1 = AssetType.objects.create(name='asset_type_1')
+        asset_1 = Asset.objects.create(name='asset_1', type=asset_type_1)
+        asset_2 = Asset.objects.create(name='asset_2', type=asset_type_1)
+        asset_1.files.add(file_1, file_2)
+        asset_2.files.add(file_3, file_4)
+        task_type_1 = TaskType.objects.create(name='task_type_1')
+        task_1 = Task.objects.create(name='task_1', type=task_type_1)
+        task_2 = Task.objects.create(name='task_2', type=task_type_1)
+        task_1.assets.add(asset_1)
+        task_2.assets.add(asset_2)
+        self.client.login(username='user_1', password='user_1_password')
 
-    def test_projects_list_page(self):
-        """The projects list page should only display projects that the current user is associated with."""
+    def test_project_list_page(self):
+        """The project list page should only display projects associated with the current user."""
         response = self.client.get(reverse('spine_core:project'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('spine_core/list.html')
         self.assertEqual(response.context['header'], 'Projects')
-        self.assertQuerysetEqual(response.context['object_list'], ['<Project: test_project_with_user>'])
+        self.assertQuerysetEqual(response.context['object_list'], ['<Project: project_1>'])
+
+    def test_repo_list_page(self):
+        """The repo list page should only display repos associated with the current user."""
+        response = self.client.get(reverse('spine_core:repo'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('spine_core/list.html')
+        self.assertEqual(response.context['header'], 'Repos')
+        self.assertQuerysetEqual(response.context['object_list'], ['<Repo: repo_1>'])
+
+    def test_file_list_page(self):
+        """The file list page should only display files associated with the current user."""
+        response = self.client.get(reverse('spine_core:file'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('spine_core/list.html')
+        self.assertEqual(response.context['header'], 'Files')
+        self.assertQuerysetEqual(response.context['object_list'], ['<File: file_1>', '<File: file_2>'], ordered=False)
+
+    def test_depend_list_page(self):
+        """The depend list page should only display depends associated with the current user."""
+        response = self.client.get(reverse('spine_core:depend'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('spine_core/list.html')
+        self.assertEqual(response.context['header'], 'Depends')
+        self.assertQuerysetEqual(response.context['object_list'], ['<Depend: file_1 \u2192 file_2>'])
+
+    def test_asset_list_page(self):
+        """The asset list page should only display assets associated with the current user."""
+        response = self.client.get(reverse('spine_core:asset'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('spine_core/list.html')
+        self.assertEqual(response.context['header'], 'Assets')
+        self.assertQuerysetEqual(response.context['object_list'], ['<Asset: asset_1>'])
+
+    def test_task_list_page(self):
+        """The task list page should only display tasks associated with the current user."""
+        response = self.client.get(reverse('spine_core:task'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('spine_core/list.html')
+        self.assertEqual(response.context['header'], 'Tasks')
+        self.assertQuerysetEqual(response.context['object_list'], ['<Task: task_1>'])

@@ -49,7 +49,7 @@ class RepoListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(RepoListView, self).get_context_data(**kwargs)
-        context['header'] = 'Repo'
+        context['header'] = 'Repos'
         context['object_url'] = 'spine_core:repo'
         return context
 
@@ -62,7 +62,7 @@ class FileListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(FileListView, self).get_context_data(**kwargs)
-        context['header'] = 'File'
+        context['header'] = 'Files'
         context['object_url'] = 'spine_core:file'
         return context
 
@@ -75,7 +75,7 @@ class DependListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(DependListView, self).get_context_data(**kwargs)
-        context['header'] = 'Depend'
+        context['header'] = 'Depends'
         context['object_url'] = 'spine_core:depend'
         return context
 
@@ -84,11 +84,11 @@ class AssetListView(LoginRequiredMixin, ListView):
     template_name = 'spine_core/list.html'
 
     def get_queryset(self):
-        return Asset.objects.filter(files__repo__project__users=self.request.user)
+        return Asset.objects.filter(files__repo__project__users=self.request.user).distinct()
 
     def get_context_data(self, **kwargs):
         context = super(AssetListView, self).get_context_data(**kwargs)
-        context['header'] = 'Asset'
+        context['header'] = 'Assets'
         context['object_url'] = 'spine_core:asset'
         return context
 
@@ -97,11 +97,11 @@ class TaskListView(LoginRequiredMixin, ListView):
     template_name = 'spine_core/list.html'
 
     def get_queryset(self):
-        return Task.objects.filter(assets__files__repo__project__users=self.request.user)
+        return Task.objects.filter(assets__files__repo__project__users=self.request.user).distinct()
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)
-        context['header'] = 'Task'
+        context['header'] = 'Tasks'
         context['object_url'] = 'spine_core:task'
         return context
 
@@ -118,7 +118,7 @@ class FileDetailView(LoginRequiredMixin, DetailView):
     template_name = 'spine_core/file.html'
 
     def get_context_data(self, **kwargs):
-        context = super(FileView, self).get_context_data(**kwargs)
+        context = super(FileDetailView, self).get_context_data(**kwargs)
         context['file'].update_stats()
         return context
 
