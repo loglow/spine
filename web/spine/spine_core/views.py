@@ -67,6 +67,11 @@ class TestsView(DetailView):
     # return HttpResponse('<br>'.join(spider.all_files()))
 
 
+class AssetView(DetailView):
+    model = Asset
+    template_name = 'spine_core/asset.hmtl'
+
+
 def update(request, repo_id):
     repo = get_object_or_404(Repo, pk=repo_id)
     a = list_current.delay(repo.id)
