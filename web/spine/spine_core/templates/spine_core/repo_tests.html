@@ -23,4 +23,10 @@
 {% csrf_token %}
 <input type="submit" value="List" />
 </form>
+
+<form action="{% url 'spine_core:depmake' repo.id %}" method="post">
+{% csrf_token %}
+<input type="submit" value="Crawl" />
+</form>
+
 {% endblock %}
