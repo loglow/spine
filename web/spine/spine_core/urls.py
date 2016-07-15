@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^depend/(?P<pk>[0-9]+)/$', views.DependView.as_view(), name='depend'),
     url(r'^asset/(?P<pk>[0-9]+)/$', views.AssetView.as_view(), name='asset'),
     url(r'^(?P<repo_id>[0-9]+)/update/$', views.update, name='update'),
+    url(r'^tests/(?P<pk>[0-9]+)/$', views.TestsView.as_view(), name='tests'),
 ]
