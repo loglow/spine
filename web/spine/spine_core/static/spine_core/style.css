@@ -21,3 +21,7 @@ tbody th {
     padding: 5px 10px;
     margin-top: 9px;
 }
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
