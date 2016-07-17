@@ -16,21 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from django.db import models
-from django.utils import timezone
-from django.contrib.auth.models import User
 from datetime import datetime
 from os import path
-import hashlib
 import humanize
 import magic
 
-def md5sum(filename, blocksize=65536):
-    hash = hashlib.md5()
-    with open(filename, "rb") as f:
-        for block in iter(lambda: f.read(blocksize), b""):
-            hash.update(block)
-    return hash.hexdigest()
+from django.db import models
+from django.utils import timezone
+from django.contrib.auth.models import User
+
+from spine_core.misc import md5sum
 
 class Repo(models.Model):
     name = models.CharField(max_length=200)
@@ -79,7 +74,10 @@ class File(models.Model):
 
     def get_pretty_size(self):
         """Return file size in human-readable natural language."""
-        return humanize.naturalsize(self.size)
+        if self.size:
+            return humanize.naturalsize(self.size)
+        else:
+            return None
 
     def update_stats(self):
         """Check if file exists on disk and if so, update its metadata."""
