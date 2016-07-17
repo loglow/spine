@@ -16,120 +16,59 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from django.shortcuts import render
 from django.views.generic import DetailView, ListView
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import redirect_to_login
+from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 
-from spine_core.models import *
+from spine_core.misc import url_qs
 
-@login_required(redirect_field_name=None)
 def index(request):
     return redirect('spine_core:project')
 
-class ProjectListView(LoginRequiredMixin, ListView):
-    template_name = 'spine_core/list.html'
+class AuthListView(ListView):
+    filter = None
 
     def get_queryset(self):
-        return Project.objects.filter(users=self.request.user)
+        return self.model.objects.filter(**{self.filter: self.request.user}).distinct()
 
     def get_context_data(self, **kwargs):
-        context = super(ProjectListView, self).get_context_data(**kwargs)
-        context['header'] = 'Projects'
-        context['object_url'] = 'spine_core:project'
+        context = super(AuthListView, self).get_context_data(**kwargs)
+        context['header'] = self.model.__name__+'s'
+        context['object_url'] = 'spine_core:'+self.model.__name__.lower()
         return context
 
-class RepoListView(LoginRequiredMixin, ListView):
-    model = Repo
-    template_name = 'spine_core/list.html'
+class ProjectListView(AuthListView): pass
+class RepoListView(AuthListView): pass
+class FileListView(AuthListView): pass
+class DependListView(AuthListView): pass
+class AssetListView(AuthListView): pass
+class TaskListView(AuthListView): pass
 
-    def get_queryset(self):
-        return Repo.objects.filter(project__users=self.request.user)
+class AuthDetailView(DetailView):
+    filter = None
 
-    def get_context_data(self, **kwargs):
-        context = super(RepoListView, self).get_context_data(**kwargs)
-        context['header'] = 'Repos'
-        context['object_url'] = 'spine_core:repo'
-        return context
+    def dispatch(self, request, *args, **kwargs):
+        if self.get_object() in self.model.objects.filter(**{self.filter: self.request.user}):
+            return super(AuthDetailView, self).dispatch(request, *args, **kwargs)
+        else:
+            return redirect_to_login(
+                '/{model}/{pk}/'.format(
+                    model=self.model.__name__.lower(),
+                    pk=self.kwargs['pk'],
+                ),
+                login_url=url_qs(reverse('spine_core:login'), msg='auth'),
+            )
 
-class FileListView(LoginRequiredMixin, ListView):
-    model = File
-    template_name = 'spine_core/list.html'
+class ProjectDetailView(AuthDetailView): pass
+class RepoDetailView(AuthDetailView): pass
+class DependDetailView(AuthDetailView): pass
+class AssetDetailView(AuthDetailView): pass
+class TaskDetailView(AuthDetailView): pass
 
-    def get_queryset(self):
-        return File.objects.filter(repo__project__users=self.request.user)
-
-    def get_context_data(self, **kwargs):
-        context = super(FileListView, self).get_context_data(**kwargs)
-        context['header'] = 'Files'
-        context['object_url'] = 'spine_core:file'
-        return context
-
-class DependListView(LoginRequiredMixin, ListView):
-    model = Depend
-    template_name = 'spine_core/list.html'
-
-    def get_queryset(self):
-        return Depend.objects.filter(master_file__repo__project__users=self.request.user)
-
-    def get_context_data(self, **kwargs):
-        context = super(DependListView, self).get_context_data(**kwargs)
-        context['header'] = 'Depends'
-        context['object_url'] = 'spine_core:depend'
-        return context
-
-class AssetListView(LoginRequiredMixin, ListView):
-    model = Asset
-    template_name = 'spine_core/list.html'
-
-    def get_queryset(self):
-        return Asset.objects.filter(files__repo__project__users=self.request.user).distinct()
-
-    def get_context_data(self, **kwargs):
-        context = super(AssetListView, self).get_context_data(**kwargs)
-        context['header'] = 'Assets'
-        context['object_url'] = 'spine_core:asset'
-        return context
-
-class TaskListView(LoginRequiredMixin, ListView):
-    model = Task
-    template_name = 'spine_core/list.html'
-
-    def get_queryset(self):
-        return Task.objects.filter(assets__files__repo__project__users=self.request.user).distinct()
-
-    def get_context_data(self, **kwargs):
-        context = super(TaskListView, self).get_context_data(**kwargs)
-        context['header'] = 'Tasks'
-        context['object_url'] = 'spine_core:task'
-        return context
-
-class ProjectDetailView(LoginRequiredMixin, DetailView):
-    model = Project
-    template_name = 'spine_core/project.html'
-
-class RepoDetailView(LoginRequiredMixin, DetailView):
-    model = Repo
-    template_name = 'spine_core/repo.html'
-
-class FileDetailView(LoginRequiredMixin, DetailView):
-    model = File
-    template_name = 'spine_core/file.html'
+class FileDetailView(AuthDetailView):
 
     def get_context_data(self, **kwargs):
         context = super(FileDetailView, self).get_context_data(**kwargs)
         context['file'].update_stats()
         return context
-
-class DependDetailView(LoginRequiredMixin, DetailView):
-    model = Depend
-    template_name = 'spine_core/depend.html'
-
-class AssetDetailView(LoginRequiredMixin, DetailView):
-    model = Asset
-    template_name = 'spine_core/asset.html'
-
-class TaskDetailView(LoginRequiredMixin, DetailView):
-    model = Task
-    template_name = 'spine_core/task.html'

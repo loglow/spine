@@ -18,31 +18,120 @@
 
 from django.conf.urls import url
 from django.contrib import auth
+from django.contrib.auth.decorators import login_required
 
-from spine_core.forms import *
-from spine_core.views import *
+from spine_core import views, forms, models
+
+AUTH_FILTERS = {
+    'project': 'users',
+    'repo': 'project__users',
+    'file': 'repo__project__users',
+    'depend': 'master_file__repo__project__users',
+    'asset': 'files__repo__project__users',
+    'task': 'assets__files__repo__project__users',
+}
 
 app_name = 'spine_core'
 urlpatterns = [
-    url(r'^$', index, name='index'),
-    # User auth views
-    url(r'^login/$', auth.views.login, {
-        'authentication_form': BootstrapAuthForm,
-        'template_name': 'spine_core/login.html',
-    }, name="login"),
-    url(r'^logout/$', auth.views.logout_then_login, name="logout"),
-    # Model-based list views
-    url(r'^project/$', ProjectListView.as_view(), name='project'),
-    url(r'^repo/$', RepoListView.as_view(), name='repo'),
-    url(r'^file/$', FileListView.as_view(), name='file'),
-    url(r'^depend/$', DependListView.as_view(), name='depend'),
-    url(r'^asset/$', AssetListView.as_view(), name='asset'),
-    url(r'^task/$', TaskListView.as_view(), name='task'),
-    # Model-based detail views
-    url(r'^project/(?P<pk>[0-9]+)/$', ProjectDetailView.as_view(), name='project'),
-    url(r'^repo/(?P<pk>[0-9]+)/$', RepoDetailView.as_view(), name='repo'),
-    url(r'^file/(?P<pk>[0-9]+)/$', FileDetailView.as_view(), name='file'),
-    url(r'^depend/(?P<pk>[0-9]+)/$', DependDetailView.as_view(), name='depend'),
-    url(r'^asset/(?P<pk>[0-9]+)/$', AssetDetailView.as_view(), name='asset'),
-    url(r'^task/(?P<pk>[0-9]+)/$', TaskDetailView.as_view(), name='task'),
+    url(r'^$',
+        login_required(
+            views.index,
+            redirect_field_name=None,
+        ), name='index',
+    ),
+    url(r'^login/$',
+        auth.views.login, {
+            'authentication_form': forms.BootstrapAuthForm,
+            'template_name': 'spine_core/login.html',
+        }, name="login",
+    ),
+    url(r'^logout/$',
+        auth.views.logout_then_login, {
+            'login_url': '/login/?msg=logout',
+        }, name="logout",
+    ),
+    url(r'^project/$',
+        login_required(views.ProjectListView.as_view(
+            model=models.Project,
+            template_name='spine_core/list.html',
+            filter=AUTH_FILTERS['project'],
+        )), name='project',
+    ),
+    url(r'^repo/$',
+        login_required(views.RepoListView.as_view(
+            model=models.Repo,
+            template_name='spine_core/list.html',
+            filter=AUTH_FILTERS['repo'],
+        )), name='repo',
+    ),
+    url(r'^file/$',
+        login_required(views.FileListView.as_view(
+            model=models.File,
+            template_name='spine_core/list.html',
+            filter=AUTH_FILTERS['file'],
+        )), name='file',
+    ),
+    url(r'^depend/$',
+        login_required(views.DependListView.as_view(
+            model=models.Depend,
+            template_name='spine_core/list.html',
+            filter=AUTH_FILTERS['depend'],
+        )), name='depend',
+    ),
+    url(r'^asset/$',
+        login_required(views.AssetListView.as_view(
+            model=models.Asset,
+            template_name='spine_core/list.html',
+            filter=AUTH_FILTERS['asset'],
+        )), name='asset',
+    ),
+    url(r'^task/$',
+        login_required(views.TaskListView.as_view(
+            model=models.Task,
+            template_name='spine_core/list.html',
+            filter=AUTH_FILTERS['task'],
+        )), name='task',
+    ),
+    url(r'^project/(?P<pk>[0-9]+)/$',
+        login_required(views.ProjectDetailView.as_view(
+            model=models.Project,
+            template_name='spine_core/project.html',
+            filter=AUTH_FILTERS['project'],
+        )), name='project',
+    ),
+    url(r'^repo/(?P<pk>[0-9]+)/$',
+        login_required(views.RepoDetailView.as_view(
+            model=models.Repo,
+            template_name='spine_core/repo.html',
+            filter=AUTH_FILTERS['repo'],
+        )), name='repo',
+    ),
+    url(r'^file/(?P<pk>[0-9]+)/$',
+        login_required(views.FileDetailView.as_view(
+            model=models.File,
+            template_name='spine_core/file.html',
+            filter=AUTH_FILTERS['file'],
+        )), name='file',
+    ),
+    url(r'^depend/(?P<pk>[0-9]+)/$',
+        login_required(views.DependDetailView.as_view(
+            model=models.Depend,
+            template_name='spine_core/depend.html',
+            filter=AUTH_FILTERS['depend'],
+        )), name='depend',
+    ),
+    url(r'^asset/(?P<pk>[0-9]+)/$',
+        login_required(views.AssetDetailView.as_view(
+            model=models.Asset,
+            template_name='spine_core/asset.html',
+            filter=AUTH_FILTERS['asset'],
+        )), name='asset',
+    ),
+    url(r'^task/(?P<pk>[0-9]+)/$',
+        login_required(views.TaskDetailView.as_view(
+            model=models.Task,
+            template_name='spine_core/task.html',
+            filter=AUTH_FILTERS['task'],
+        )), name='task',
+    ),
 ]
