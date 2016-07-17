@@ -43,7 +43,7 @@
                                 <i class="fa fa-user"></i> {{ user }} <i class="fa fa-caret-down"></i>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="{% url 'spine_core:logout' %}">Sign out</a></li>
+                                <li><a href="{% url 'spine_core:logout' %}">Logout</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -52,14 +52,12 @@
             </div>
         </nav>
         <div class="container">
-            {% if user.is_authenticated %}
             <div class="page-header">
                 <h1>
                     {% block header %}
                     {% endblock %}
                 </h1>
             </div>
-            {% endif %}
             {% block content %}
             {% endblock %}
         </div>
