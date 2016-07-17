@@ -18,13 +18,13 @@
 
 from django.contrib.admin import site
 
-from spine_core.models import *
+from spine_core import models
 
-site.register(Project)
-site.register(Repo)
-site.register(File)
-site.register(Depend)
-site.register(Asset)
-site.register(AssetType)
-site.register(Task)
-site.register(TaskType)
+site.register(models.Project)
+site.register(models.Repo)
+site.register(models.File)
+site.register(models.Depend)
+site.register(models.Asset)
+site.register(models.AssetType)
+site.register(models.Task)
+site.register(models.TaskType)
