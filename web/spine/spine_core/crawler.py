@@ -18,19 +18,19 @@
 
 
 import os
-import bpy
 import json
 import magic  #XXX pip install python-magic
 import subprocess
 from collections import defaultdict
-from bpy.utils import blend_paths
-
 from .topsort import Network
 
 LIBRARY_FILE = "library.json"
 DEPENDS_FILE = "dependencies.json"
 CONFIG_FILE = "config.json"
 STANDARD_FOLDER_IGNORES = ['.svn', '.git']
+my_dir = os.path.dirname(os.path.realpath(__file__))
+SCRIPT_PATH = os.path.join(my_dir, "blenscript.py")
+
 
 
 class BlendCheck():
@@ -48,15 +48,14 @@ class BlendCheck():
     @classmethod
     def deps(cls, filepath):
         """ Return file path dependencies list from filepath """
+        os.system("blender -b {} -P {}".format(filepath, SCRIPT_PATH))
         try:
-            bpy.ops.wm.open_mainfile(filepath=filepath)
-        except RuntimeError:
-            # raise RuntimeError("Not a Blend File!") #XXX shouldn't happen
-            print("NOT A BLEND FILE:",filepath)
-            return []
-        return (
-            p for p in blend_paths(absolute=True, packed=False, local=True)
-            if p not in ("/", "\\"))
+            results = json.loads(open("{}.spine".format(filepath)).read())
+        except:
+            print("BARF")
+        else:
+            os.remove("{}.spine".format(filepath))
+            return results
 
 
 class FileSupport():
@@ -161,17 +160,18 @@ class ProjectCrawler(Network):
         relative = self._relpath(normalized)
         paths = self.file_support.check(normalized)
         #TODO For now we'll ignore missing or out of tree paths
-        self._add_deps(relative, (
+        retpaths = [
             self._relpath(path) for path in paths
-            if self.root in path and os.path.isfile(path)))
-        return relative, paths
+            if self.root in path and os.path.isfile(path)]
+        # self._add_deps(relative, retpaths)
+        return relative, retpaths
 
     def check_files(self, filelist):
         """
         Check a list of files given from another source, e.g. svn status
         """
         for filepath in filelist:
-            self.check_file(filepath)
+            yield(self.check_file(filepath))
 
     def check_project(self):
         """
