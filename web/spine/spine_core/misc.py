@@ -20,6 +20,7 @@ import hashlib
 from urllib import parse
 
 def md5sum(filename, blocksize=65536):
+    """Return MD5 hash for specified file."""
     hash = hashlib.md5()
     with open(filename, "rb") as f:
         for block in iter(lambda: f.read(blocksize), b""):
