@@ -1,0 +1,14 @@
+{% extends 'spine_core/base.html' %}
+
+{% block header %}
+<a href="{% url 'spine_core:file' %}">Files</a>
+<span class="text-muted">/</span>
+{{ file }}
+{% endblock %}
+
+{% block content %}
+{% include 'panel/detail/file.html' with set=file %}
+{% include 'panel/list/file.html' with set=file.depends note='that this file depends on' %}
+{% include 'panel/list/file.html' with set=file.file_set note='depending on this file' %}
+{% include 'panel/list/asset.html' with set=file.asset_set note='associated with this file' %}
+{% endblock %}

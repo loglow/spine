@@ -1,0 +1,9 @@
+{% extends 'spine_core/base.html' %}
+
+{% block header %}
+Assets
+{% endblock header %}
+
+{% block content %}
+{% include 'panel/list/asset.html' with set=object_list %}
+{% endblock content %}

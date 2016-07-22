@@ -1,0 +1,9 @@
+{% extends 'spine_core/base.html' %}
+
+{% block header %}
+Tasks
+{% endblock header %}
+
+{% block content %}
+{% include 'panel/list/task.html' with set=object_list %}
+{% endblock content %}

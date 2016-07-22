@@ -1,20 +1,19 @@
-.list-group-item-header, thead {
-    background-color: #ddd;
-    font-weight: bold;
+body {
+    padding-top: 50px;
+    background-color: #fff;
 }
 
-tbody th {
-    background-color: #f6f6f6;
-    font-weight: normal;
+th {
+    background-color: #eee;
 }
 
-.muted {
-    opacity: 0.5;
+textarea {
+    resize: vertical;
+    overflow-x: hidden;
 }
 
-.depend-arrow {
-    font-size: 64px;
-    color: #666;
+.text-muted {
+    color: #aaa;
 }
 
 .navbar-toggle {
@@ -24,4 +23,77 @@ tbody th {
 
 .form-group:last-child {
     margin-bottom: 0;
+}
+
+.table-condensed th,
+.table-condensed td {
+    padding: 5px 8px !important;
+}
+
+.table-condensed .label,
+.table-condensed .badge {
+    position: relative;
+    top: -1px;
+}
+
+/* Comments */
+
+.comment-input {
+    display: table-cell;
+    width: 100%;
+}
+
+.comment-button {
+    display: table-cell;
+    padding-left: 15px;
+    vertical-align: bottom;
+}
+
+.user-box {
+    background-color: #f6f6f6;
+    white-space: nowrap;
+    padding: 7px 20px 7px 10px !important;
+}
+
+.comment-box {
+    padding: 7px 10px !important;
+}
+
+.comment-box p:last-child {
+    margin-bottom: 0;
+}
+
+/* Panels */
+
+.panel-dark {
+    border-color: #999;
+}
+
+.panel-dark .panel-heading {
+    color: white;
+    background-color: #999;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.panel-body {
+    background-color: #eee;
+}
+
+.panel-body .form-group {
+    margin-top: 0 !important;
+}
+
+.panel-heading i.fa {
+    margin-right: 10px;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.panel-heading i.fa:hover {
+    color: white;
+}
+
+.panel-heading .note {
+    color: #ddd;
 }

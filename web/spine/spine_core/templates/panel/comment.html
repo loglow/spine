@@ -1,0 +1,35 @@
+{% extends 'panel/base.html' %}
+
+{% load humanize %}
+{% load spine_core %}
+
+{% block all %}
+{% with set=set.all title=set.count|object_count_string:"Comment" pbody=True %}
+{{ block.super }}
+{% endwith %}
+{% endblock all %}
+
+{% block pbody %}
+<form method="post" action="{{ request.path }}">
+    {% csrf_token %}
+    <div class="comment-input">{{ form.new_comment }}</div>
+    <div class="comment-button">
+        <button class="btn btn-default" type="submit">Comment</button>
+    </div>
+</form>
+{% endblock pbody %}
+
+{% block row %}
+<td class="user-box">
+    <div><strong>{{ item.user }}</strong></div>
+    <div class="text-muted"><small>{{ item.time|naturaltime }}</small></div>
+    {% if user == item.user %}
+    <div>
+        <a href="#" class="confirm_comment_delete text-danger" data-id="{{ item.id }}">
+            <i class="fa fa-times"></i>
+        </a>
+    </div>
+    {% endif %}
+</td>
+<td class="comment-box">{{ item.text|linebreaks }}</td>
+{% endblock row %}

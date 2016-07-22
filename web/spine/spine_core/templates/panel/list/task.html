@@ -1,0 +1,29 @@
+{% extends 'panel/base.html' %}
+
+{% load spine_core %}
+
+{% block all %}
+{% with set=set.all title=set.count|object_count_string:"Task" columns='Name Type Duration Assigned Status Assets ID' %}
+{{ block.super }}
+{% endwith %}
+{% endblock all %}
+
+{% block row %}
+<td><a href="{% url 'spine_core:task' item.id %}"><b>{{ item.name }}</b></a></td>
+<td>{{ item.type }}</td>
+<td>{{ item.duration|default:'<span class="text-muted">None</span>' }}</td>
+<td>{{ item.assigned|default:'<span class="text-muted">None</span>' }}</td>
+<td>
+    {% if item.status == 'NOT_STARTED' %}
+    <span class="label label-danger">
+    {% elif item.status == 'IN_PROGRESS' %}
+    <span class="label label-warning">
+    {% elif item.status == 'COMPLETE' %}
+    <span class="label label-success">
+    {% endif %}
+    {{ item.get_status_display }}
+    </span>
+</td>
+<td><span class="badge">{{ item.assets.count }}</span></td>
+<td><code>task:{{ item.id }}</code></td>
+{% endblock row %}

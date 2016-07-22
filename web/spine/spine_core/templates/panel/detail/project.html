@@ -1,0 +1,18 @@
+{% extends 'panel/base.html' %}
+
+{% block all %}
+{% with title="Details" %}
+{{ block.super }}
+{% endwith %}
+{% endblock all %}
+
+{% block tbody %}
+<tr>
+    <th>Name</th>
+    <td>{{ set.name }}</td>
+</tr>
+<tr>
+    <th>ID</th>
+    <td><code>project:{{ set.id }}</code></td>
+</tr>
+{% endblock tbody %}

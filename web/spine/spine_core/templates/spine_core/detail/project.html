@@ -1,0 +1,13 @@
+{% extends 'spine_core/base.html' %}
+
+{% block header %}
+<a href="{% url 'spine_core:project' %}">Projects</a>
+<span class="text-muted">/</span>
+{{ project }}
+{% endblock %}
+
+{% block content %}
+{% include 'panel/detail/project.html' with set=project %}
+{% include 'panel/list/repo.html' with set=project.repos note='linked to this project' %}
+{% include 'panel/list/user.html' with set=project.users note='assigned to this project' %}
+{% endblock %}

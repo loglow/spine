@@ -1,0 +1,39 @@
+{% load spine_core %}
+
+{% block all %}
+<div class="panel panel-dark">
+    <div class="panel-heading">
+        {{ title }}
+        {% if note %}<span class="note">&mdash; {{ note }}</span>{% endif %}
+    </div>
+    {% if pbody %}
+    <div class="panel-body">
+        {% block pbody %}
+        {% endblock pbody %}
+    </div>
+    {% endif %}
+    {% if set %}
+    <table class="table table-condensed">
+        {% if columns %}
+        <thead>
+            <tr>
+                {% for column in columns.split %}
+                <th>{{ column|under_to_space }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        {% endif %}
+        <tbody>
+            {% block tbody %}
+            {% for item in set %}
+            <tr>
+                {% block row %}
+                {% endblock row %}
+            </tr>
+            {% endfor %}
+            {% endblock tbody %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock all %}

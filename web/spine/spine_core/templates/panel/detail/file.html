@@ -1,0 +1,68 @@
+{% extends 'panel/base.html' %}
+
+{% block all %}
+{% with title="Details" %}
+{{ block.super }}
+{% endwith %}
+{% endblock all %}
+
+{% block tbody %}
+<tr>
+    <th>Status</th>
+    <td>
+        {% if set.online %}
+        <span class="label label-success">Online</span>
+        {% else %}
+        <span class="label label-danger">Offline</span>
+        {% endif %}
+    </td>
+</tr>
+<tr>
+    <th>Path</th>
+    <td>{{ set.path }}</td>
+</tr>
+<tr>
+    <th>Type</th>
+    <td>{{ set.type|default:'<span class="text-muted">Unknown</span>' }}</td>
+</tr>
+<tr>
+    <th>MIME</th>
+    <td>{{ set.mime|default:'<span class="text-muted">Unknown</span>' }}</td>
+</tr>
+<tr>
+    <th>Size</th>
+    <td>
+        {% if not set.size %}
+        <span class="text-muted">Unknown</span>
+        {% else %}
+        {{ set.size|filesizeformat }}
+        {% endif %}
+    </td>
+</tr>
+<tr>
+    <th>MD5</th>
+    <td>{{ set.hash|default:'<span class="text-muted">Unknown</span>' }}</td>
+</tr>
+<tr>
+    <th>Modified</th>
+    <td>{{ set.modified|default:'<span class="text-muted">Unknown</span>' }}</td>
+</tr>
+<tr>
+    <th>Version</th>
+    <td>
+        {% if not set.repo.type %}
+        <span class="text-muted">None</span>
+        {% else %}
+        {{ set.version }}
+        {% endif %}
+    </td>
+</tr>
+<tr>
+    <th>Repo</th>
+    <td><a href="{% url 'spine_core:repo' set.repo.id %}"><b>{{ set.repo }}</b></a></td>
+</tr>
+<tr>
+    <th>ID</th>
+    <td><code>file:{{ set.id }}</code></td>
+</tr>
+{% endblock tbody %}

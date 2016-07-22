@@ -1,0 +1,18 @@
+{% extends 'panel/base.html' %}
+
+{% load spine_core %}
+
+{% block all %}
+{% with set=set.all title=set.count|object_count_string:"Repo" columns='Name URL Path Type Files ID' %}
+{{ block.super }}
+{% endwith %}
+{% endblock all %}
+
+{% block row %}
+<td><a href="{% url 'spine_core:repo' item.id %}"><b>{{ item.name }}</b></a></td>
+<td>{{ item.url|default:'<span class="text-muted">None</span>' }}</td>
+<td>{{ item.path }}</td>
+<td>{{ item.get_type_display|default:'<span class="text-muted">None</span>' }}</td>
+<td><span class="badge">{{ item.file_set.count }}</span></td>
+<td><code>repo:{{ item.id }}</code></td>
+{% endblock row %}

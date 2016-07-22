@@ -1,0 +1,48 @@
+{% extends 'panel/base.html' %}
+
+{% block all %}
+{% with title="Details" %}
+{{ block.super }}
+{% endwith %}
+{% endblock all %}
+
+{% block tbody %}
+<tr>
+    <th>Name</th>
+    <td>{{ set.name }}</td>
+</tr>
+<tr>
+    <th>Description</th>
+    <td>{{ set.desc|default:'<span class="text-muted">None</span>' }}</td>
+</tr>
+<tr>
+    <th>Type</th>
+    <td>{{ set.type }}</td>
+</tr>
+<tr>
+    <th>Status</th>
+    <td>
+        {% if set.status == 'NOT_STARTED' %}
+        <span class="label label-danger">
+        {% elif set.status == 'IN_PROGRESS' %}
+        <span class="label label-warning">
+        {% elif set.status == 'COMPLETE' %}
+        <span class="label label-success">
+        {% endif %}
+        {{ set.get_status_display }}
+        </span>
+    </td>
+</tr>
+<tr>
+    <th>Duration</th>
+    <td>{{ set.duration|default:'<span class="text-muted">None</span>' }}</td>
+</tr>
+<tr>
+    <th>Assigned</th>
+    <td>{{ set.assigned|default:'<span class="text-muted">None</span>' }}</td>
+</tr>
+<tr>
+    <th>ID</th>
+    <td><code>task:{{ set.id }}</code></td>
+</tr>
+{% endblock tbody %}

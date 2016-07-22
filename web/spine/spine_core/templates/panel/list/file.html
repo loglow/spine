@@ -1,0 +1,25 @@
+{% extends 'panel/base.html' %}
+
+{% load spine_core %}
+
+{% block all %}
+{% with set=set.all title=set.count|object_count_string:"File" columns='Path Size Modified Depends_On Depended_On In_Repo ID' %}
+{{ block.super }}
+{% endwith %}
+{% endblock all %}
+
+{% block row %}
+<td><a href="{% url 'spine_core:file' item.id %}"><b>{{ item.path }}</b></a></td>
+<td>
+    {% if not item.size %}
+    <span class="text-muted">Unknown</span>
+    {% else %}
+    {{ item.size|filesizeformat }}
+    {% endif %}
+</td>
+<td>{{ item.modified|default:'<span class="text-muted">Unknown</span>' }}</td>
+<td><span class="badge">{{ item.depends.count }}</span></td>
+<td><span class="badge">{{ item.file_set.count }}</span></td>
+<td><a href="{% url 'spine_core:repo' item.repo.id %}"><b>{{ item.repo.name }}</b></a></td>
+<td><code>file:{{ item.id }}</code></td>
+{% endblock row %}

@@ -1,0 +1,30 @@
+{% extends 'panel/base.html' %}
+
+{% block all %}
+{% with title="Details" %}
+{{ block.super }}
+{% endwith %}
+{% endblock all %}
+
+{% block tbody %}
+<tr>
+    <th>Name</th>
+    <td>{{ set.name }}</td>
+</tr>
+<tr>
+    <th>Type</th>
+    <td>{{ set.get_type_display|default:'<span class="text-muted">None</span>' }}</td>
+</tr>
+<tr>
+    <th>URL</th>
+    <td>{{ set.url|default:'<span class="text-muted">None</span>' }}</td>
+</tr>
+<tr>
+    <th>Path</th>
+    <td>{{ set.path }}</td>
+</tr>
+<tr>
+    <th>ID</th>
+    <td><code>repo:{{ set.id }}</code></td>
+</tr>
+{% endblock tbody %}

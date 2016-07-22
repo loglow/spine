@@ -1,0 +1,14 @@
+{% extends 'spine_core/base.html' %}
+
+{% block header %}
+<a href="{% url 'spine_core:asset' %}">Assets</a>
+<span class="text-muted">/</span>
+{{ asset }}
+{% endblock header %}
+
+{% block content %}
+{% include 'panel/detail/asset.html' with set=asset %}
+{% include 'panel/list/file.html' with set=asset.files note='associated with this asset' %}
+{% include 'panel/list/task.html' with set=asset.task_set note='involving this asset' %}
+{% include 'panel/comment.html' with set=asset.comments_sorted %}
+{% endblock content %}

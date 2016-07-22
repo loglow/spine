@@ -1,0 +1,16 @@
+{% extends 'panel/base.html' %}
+
+{% load spine_core %}
+
+{% block all %}
+{% with set=set.all title=set.count|object_count_string:"Project" columns='Name Repos Users ID' %}
+{{ block.super }}
+{% endwith %}
+{% endblock all %}
+
+{% block row %}
+<td><a href="{% url 'spine_core:project' item.id %}"><b>{{ item.name }}</b></a></td>
+<td><span class="badge">{{ item.repos.count }}</span></td>
+<td><span class="badge">{{ item.users.count }}</span></td>
+<td><code>project:{{ item.id }}</code></td>
+{% endblock row %}

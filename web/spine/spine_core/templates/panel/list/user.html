@@ -1,0 +1,17 @@
+{% extends 'panel/base.html' %}
+
+{% load spine_core %}
+
+{% block all %}
+{% with set=set.all title=set.count|object_count_string:"User" columns='Username First_Name Last_Name Email_Address ID' %}
+{{ block.super }}
+{% endwith %}
+{% endblock all %}
+
+{% block row %}
+<td><b>{{ item.username }}</b></a></td>
+<td>{{ item.first_name|default:'<span class="text-muted">None</span>' }}</td>
+<td>{{ item.last_name|default:'<span class="text-muted">None</span>' }}</td>
+<td>{{ item.email }}</td>
+<td><code>user:{{ item.id }}</code></td>
+{% endblock row %}

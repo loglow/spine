@@ -1,0 +1,12 @@
+{% extends 'spine_core/base.html' %}
+
+{% block header %}
+<a href="{% url 'spine_core:task' %}">Tasks</a>
+<span class="text-muted">/</span>
+{{ task }}
+{% endblock %}
+
+{% block content %}
+{% include 'panel/detail/task.html' with set=task %}
+{% include 'panel/list/asset.html' with set=task.assets note='that this task involves' %}
+{% endblock %}

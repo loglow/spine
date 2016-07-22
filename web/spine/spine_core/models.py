@@ -18,7 +18,6 @@
 
 from datetime import datetime
 from os import path
-import humanize
 import magic
 
 from django.db import models
@@ -29,10 +28,9 @@ from spine_core.misc import md5sum
 
 class Repo(models.Model):
     name = models.CharField(max_length=200)
-    url = models.CharField(max_length=200)
+    url = models.CharField(max_length=200, blank=True)
     path = models.CharField(max_length=200)
     REPO_TYPE_CHOICES = (
-        ('NONE', 'None'),
         ('SVN', 'Subversion'),
         ('MERC', 'Mercurial'),
         ('GIT', 'Git'),
@@ -40,7 +38,7 @@ class Repo(models.Model):
     type = models.CharField(
         max_length=8,
         choices=REPO_TYPE_CHOICES,
-        default='NONE',
+        blank=True,
     )
 
     def __str__(self):
@@ -57,13 +55,14 @@ class Project(models.Model):
 class File(models.Model):
     path = models.CharField(max_length=200)
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
-    version = models.CharField(max_length=20)
-    modified = models.DateTimeField(null=True)
-    type = models.CharField(max_length=200)
-    mime = models.CharField(max_length=50)
-    size = models.PositiveIntegerField(null=True)
-    hash = models.CharField(max_length=32)
+    version = models.CharField(max_length=20, blank=True)
+    modified = models.DateTimeField(null=True, blank=True)
+    type = models.CharField(max_length=200, blank=True)
+    mime = models.CharField(max_length=50, blank=True)
+    size = models.PositiveIntegerField(null=True, blank=True)
+    hash = models.CharField(max_length=32, blank=True)
     online = models.NullBooleanField()
+    depends = models.ManyToManyField('self', symmetrical=False, blank=True)
 
     def __str__(self):
         return self.path
@@ -71,13 +70,6 @@ class File(models.Model):
     def get_full_path(self):
         """Return fully qualified path to file on local storage."""
         return path.join(self.repo.path, self.path)
-
-    def get_pretty_size(self):
-        """Return file size in human-readable natural language."""
-        if self.size:
-            return humanize.naturalsize(self.size)
-        else:
-            return None
 
     def update_stats(self):
         """Check if file exists on disk and if so, update its metadata."""
@@ -95,17 +87,6 @@ class File(models.Model):
         self.save()
         return self.online
 
-class Depend(models.Model):
-    master_file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='master_set')
-    depend_file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='depend_set')
-    master_version = models.CharField(max_length=20)
-    depend_version = models.CharField(max_length=20)
-    master_modified = models.DateTimeField(null=True)
-    depend_modified = models.DateTimeField(null=True)
-
-    def __str__(self):
-        return str(self.master_file)+' \u2192 '+str(self.depend_file)
-
 class AssetType(models.Model):
     name = models.CharField(max_length=200)
 
@@ -116,9 +97,14 @@ class Asset(models.Model):
     name = models.CharField(max_length=200)
     files = models.ManyToManyField(File)
     type = models.ForeignKey(AssetType, on_delete=models.CASCADE)
+    comments = models.ManyToManyField('Comment')
 
     def __str__(self):
         return self.name
+
+    def comments_sorted(self):
+        """Return comments sorted by time/date."""
+        return self.comments.order_by('-time')
 
 class TaskType(models.Model):
     name = models.CharField(max_length=200)
@@ -128,11 +114,11 @@ class TaskType(models.Model):
 
 class Task(models.Model):
     name = models.CharField(max_length=200)
-    desc = models.TextField()
+    desc = models.TextField(blank=True)
     assets = models.ManyToManyField(Asset)
     type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
-    duration = models.DurationField(null=True)
-    assigned_to = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, blank=True)
+    duration = models.DurationField(null=True, blank=True)
+    assigned = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, blank=True)
     TASK_STATUS_CHOICES = (
         ('NOT_STARTED', 'Not Started'),
         ('IN_PROGRESS', 'In Progress'),
@@ -146,3 +132,11 @@ class Task(models.Model):
 
     def __str__(self):
         return self.name
+
+class Comment(models.Model):
+    text = models.TextField()
+    time = models.DateTimeField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.user)+' ('+str(self.time)+')'

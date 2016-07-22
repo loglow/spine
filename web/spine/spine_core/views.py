@@ -16,11 +16,15 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from django.views.generic import DetailView, ListView
+from django.views.generic import View, DetailView, ListView, FormView
+from django.views.generic.detail import SingleObjectMixin
 from django.contrib.auth.views import redirect_to_login
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
+from django.utils import timezone
 
+from spine_core.models import Asset, Comment
+from spine_core.forms import NewCommentForm
 from spine_core.misc import url_qs
 
 def index(request):
@@ -32,16 +36,9 @@ class AuthListView(ListView):
     def get_queryset(self):
         return self.model.objects.filter(**{self.filter: self.request.user}).distinct()
 
-    def get_context_data(self, **kwargs):
-        context = super(AuthListView, self).get_context_data(**kwargs)
-        context['header'] = self.model.__name__+'s'
-        context['object_url'] = 'spine_core:'+self.model.__name__.lower()
-        return context
-
 class ProjectListView(AuthListView): pass
 class RepoListView(AuthListView): pass
 class FileListView(AuthListView): pass
-class DependListView(AuthListView): pass
 class AssetListView(AuthListView): pass
 class TaskListView(AuthListView): pass
 
@@ -62,8 +59,6 @@ class AuthDetailView(DetailView):
 
 class ProjectDetailView(AuthDetailView): pass
 class RepoDetailView(AuthDetailView): pass
-class DependDetailView(AuthDetailView): pass
-class AssetDetailView(AuthDetailView): pass
 class TaskDetailView(AuthDetailView): pass
 
 class FileDetailView(AuthDetailView):
@@ -72,3 +67,33 @@ class FileDetailView(AuthDetailView):
         context = super(FileDetailView, self).get_context_data(**kwargs)
         context['file'].update_stats()
         return context
+
+class AssetDetailView(AuthDetailView):
+
+    def get_context_data(self, **kwargs):
+        context = super(AssetDetailView, self).get_context_data(**kwargs)
+        context['form'] = NewCommentForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        view = AssetDetailPost.as_view()
+        return view(request, *args, **kwargs)
+
+class AssetDetailPost(View, SingleObjectMixin):
+    model = Asset
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if 'new_comment' in self.request.POST:
+            comment = Comment.objects.create(
+                user=self.request.user,
+                text=self.request.POST['new_comment'],
+                time=timezone.now(),
+            )
+            comment.save()
+            self.object.comments.add(comment)
+        elif 'delete_comment' in self.request.POST:
+            id = self.request.POST['delete_comment']
+            comment = Comment.objects.get(id=id)
+            comment.delete()
+        return redirect('spine_core:asset', pk=self.object.pk)

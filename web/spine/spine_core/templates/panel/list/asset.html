@@ -1,0 +1,18 @@
+{% extends 'panel/base.html' %}
+
+{% load spine_core %}
+
+{% block all %}
+{% with set=set.all title=set.count|object_count_string:"Asset" columns='Name Type Files Tasks Comments ID' %}
+{{ block.super }}
+{% endwith %}
+{% endblock all %}
+
+{% block row %}
+<td><a href="{% url 'spine_core:asset' item.id %}"><b>{{ item.name }}</b></a></td>
+<td>{{ item.type }}</td>
+<td><span class="badge">{{ item.files.count }}</span></td>
+<td><span class="badge">{{ item.task_set.count }}</span></td>
+<td><span class="badge">{{ item.comments.count }}</span></td>
+<td><code>asset:{{ item.id }}</code></td>
+{% endblock row %}
