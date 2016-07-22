@@ -5,20 +5,16 @@ Login
 {% endblock %}
 
 {% block content %}
-
 <div class="row">
     <div class="col-sm-6">
-
         {% if request.GET.msg == 'logout' %}
         <div class="alert alert-info"><i class="fa fa-sign-out"></i> You have been logged out.</div>
         {% elif request.GET.msg == 'auth' %}
         <div class="alert alert-warning"><i class="fa fa-ban"></i> You are not authorized to view this page.</div>
         {% endif %}
-
         {% if form.errors %}
         <div class="alert alert-danger"><i class="fa fa-times"></i> Incorrect username or password.</div>
         {% endif %}
-
         <div class="well">
             <form method="post" action="{% url 'spine_core:login' %}?next={{ next }}">
                 {% csrf_token %}
@@ -32,5 +28,4 @@ Login
         </div>
     </div>
 </div>
-
 {% endblock %}
