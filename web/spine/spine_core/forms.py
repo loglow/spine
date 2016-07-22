@@ -39,3 +39,14 @@ class BootstrapAuthForm(AuthenticationForm):
             }
         )
     )
+
+class NewCommentForm(forms.Form):
+    new_comment = forms.CharField(
+        widget = forms.Textarea(
+            attrs = {
+                'rows': 1,
+                'class': 'form-control',
+                'placeholder': 'Post a new comment',
+            }
+        )
+    )
