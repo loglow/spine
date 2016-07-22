@@ -46,4 +46,5 @@ class Url(object):
         return hash(self.parts)
 
 def url_qs(path, **kwargs):
+    """Return URL with formatted query string built from passed args."""
     return path + '?' + parse.urlencode(kwargs, quote_via=parse.quote, safe='/')
