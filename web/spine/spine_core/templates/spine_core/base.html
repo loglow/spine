@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="{% static 'spine_core/css/style.css' %}">
     </head>
     <body>
-        <nav class="navbar navbar-default navbar-static-top">
+        <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{% url 'spine_core:index' %}">Spine</a>
@@ -33,7 +33,6 @@
                                 <li><a href="{% url 'spine_core:project' %}">Projects</a></li>
                                 <li><a href="{% url 'spine_core:repo' %}">Repos</a></li>
                                 <li><a href="{% url 'spine_core:file' %}">Files</a></li>
-                                <li><a href="{% url 'spine_core:depend' %}">Depends</a></li>
                                 <li><a href="{% url 'spine_core:asset' %}">Assets</a></li>
                                 <li><a href="{% url 'spine_core:task' %}">Tasks</a></li>
                             </ul>
@@ -63,5 +62,6 @@
         </div>
         <script src="{% static 'spine_core/lib/jquery-2.2.4/js/jquery.min.js' %}"></script>
         <script src="{% static 'spine_core/lib/bootstrap-3.3.6/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'spine_core/js/script.js' %}"></script>
     </body>
 </html>
